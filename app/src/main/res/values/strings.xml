@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Shavanti</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="count_words_part1">我们在一起</string>
+    <string name="count_words_part2">天啦!</string>
+
+    <string name="date_format">yyyy年MM月dd日</string>
+    <string name="date_demo">2018年2月14日</string>
+    <string name="joke_title_demo">每日一笑</string>
+    <string name="joke_demo">这是一段文字</string>
+    <string name="joke_title">每日一笑</string>
+    <string name="scrolled_to_bottom">已经到底了哦~</string>
+    <string name="funny_pic_title">搞笑图片</string>
+    <string name="news_title">每日头条</string>
+</resources>

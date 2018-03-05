@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fd4857</color>
+    <color name="colorPrimaryDark">#FFFC3F4E</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorTrans">#00FFFFFF</color>
+    <color name="yellow">#f1e90c</color>
+    <color name="blue">#0ed5ef</color>
+    <color name="red">#fd4857</color>
+    <color name="white">#FFFFFF</color>
+    <color name="pink">#DDD0D9</color>
+    <color name="pinkDark">#FFD4C5D0</color>
+    <color name="laifudao_ico_color">#2AA4CF</color>
+</resources>
