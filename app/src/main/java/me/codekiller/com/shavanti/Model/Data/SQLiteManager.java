@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,21 +62,23 @@ public class SQLiteManager {
     /**
      * 将joke保存到本地数据库
      * @param consumer
-     * @param joke
+     * @param jokes
      */
-    public void addLaifudaoJoke(Consumer<String> consumer, final LaifudaoJoke joke){
+    public void addLaifudaoJokes(Consumer<String> consumer, final List<LaifudaoJoke> jokes){
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
-                ContentValues values = new ContentValues();
-                values.put("keyDate", joke.getKeyDate());
-                values.put("title", joke.getTitle());
-                values.put("content", joke.getContent());
-                values.put("poster", joke.getPoster());
-                values.put("url", joke.getUrl());
-                database.insert("laifudao_joke", null, values);
-                values.clear();
+                for (LaifudaoJoke joke : jokes) {
+                    ContentValues values = new ContentValues();
+                    values.put("keyDate", joke.getKeyDate());
+                    values.put("title", joke.getTitle());
+                    values.put("content", joke.getContent());
+                    values.put("poster", joke.getPoster());
+                    values.put("url", joke.getUrl());
+                    database.insert("laifudao_joke", null, values);
+                    values.clear();
+                }
                 database.setTransactionSuccessful();
                 database.endTransaction();
 
@@ -90,25 +93,27 @@ public class SQLiteManager {
     /**
      * 将搞笑图片保存到本地数据库
      * @param consumer
-     * @param pic
+     * @param pics
      */
-    public void addLaifudaoPic(Consumer<String> consumer, final LaifudaoPic pic){
+    public void addLaifudaoPic(Consumer<String> consumer, final List<LaifudaoPic> pics){
         Observable.create(new ObservableOnSubscribe<String>(){
 
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
-                ContentValues values = new ContentValues();
-                values.put("keyDate", pic.getKeyDate());
-                values.put("title", pic.getTitle());
-                values.put("thumburl", pic.getThumburl());
-                values.put("sourceurl", pic.getSourceurl());
-                values.put("height", pic.getHeight());
-                values.put("width", pic.getWidth());
-                values.put("class", pic.getClassX());
-                values.put("url", pic.getUrl());
-                database.insert("laifudao_pic", null, values);
-                values.clear();
+                for (LaifudaoPic pic : pics) {
+                    ContentValues values = new ContentValues();
+                    values.put("keyDate", pic.getKeyDate());
+                    values.put("title", pic.getTitle());
+                    values.put("thumburl", pic.getThumburl());
+                    values.put("sourceurl", pic.getSourceurl());
+                    values.put("height", pic.getHeight());
+                    values.put("width", pic.getWidth());
+                    values.put("class", pic.getClassX());
+                    values.put("url", pic.getUrl());
+                    database.insert("laifudao_pic", null, values);
+                    values.clear();
+                }
                 database.setTransactionSuccessful();
                 database.endTransaction();
 
@@ -125,24 +130,26 @@ public class SQLiteManager {
      * @param consumer
      * @param news
      */
-    public void addJuheNews(Consumer<String> consumer, final JuheNews.ResultBean.DataBean news){
+    public void addJuheNews(Consumer<String> consumer, final List<JuheNews.ResultBean.DataBean> topNews){
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
-                ContentValues values = new ContentValues();
-                values.put("keyDate", news.getKeyDate());
-                values.put("date", news.getDate());
-                values.put("uniquekey", news.getUniquekey());
-                values.put("title", news.getTitle());
-                values.put("category", news.getCategory());
-                values.put("author_name", news.getAuthor_name());
-                values.put("url", news.getUrl());
-                values.put("thumbnail_pic_s", news.getThumbnail_pic_s());
-                values.put("thumbnail_pic_s02", news.getThumbnail_pic_s02());
-                values.put("thumbnail_pic_s03", news.getThumbnail_pic_s03());
-                database.insert("juhe_news", null, values);
-                values.clear();
+                for (JuheNews.ResultBean.DataBean news : topNews) {
+                    ContentValues values = new ContentValues();
+                    values.put("keyDate", news.getKeyDate());
+                    values.put("date", news.getDate());
+                    values.put("uniquekey", news.getUniquekey());
+                    values.put("title", news.getTitle());
+                    values.put("category", news.getCategory());
+                    values.put("author_name", news.getAuthor_name());
+                    values.put("url", news.getUrl());
+                    values.put("thumbnail_pic_s", news.getThumbnail_pic_s());
+                    values.put("thumbnail_pic_s02", news.getThumbnail_pic_s02());
+                    values.put("thumbnail_pic_s03", news.getThumbnail_pic_s03());
+                    database.insert("juhe_news", null, values);
+                    values.clear();
+                }
                 database.setTransactionSuccessful();
                 database.endTransaction();
 

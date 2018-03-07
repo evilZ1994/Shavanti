@@ -38,30 +38,30 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "keyDate text not null)");
 
         sqLiteDatabase.execSQL("create table if not exists laifudao_joke(" +
-                "keyDate text not null primary key," +
+                "keyDate text not null," +
                 "title text," +
                 "content text," +
                 "poster text," +
-                "url text)");
+                "url text not null primary key)");
 
         sqLiteDatabase.execSQL("create table if not exists laifudao_pic(" +
-                "keyDate text not null primary key," +
+                "keyDate text not null," +
                 "title text," +
                 "thumburl text," +
                 "sourceurl text," +
                 "height integer," +
                 "width integer," +
                 "class integer," +
-                "url text)");
+                "url text not null primary key)");
 
         sqLiteDatabase.execSQL("create table if not exists juhe_news(" +
-                "keyDate text not null primary key," +
+                "keyDate text not null," +
                 "date text," +
                 "uniquekey text," +
                 "title text," +
                 "category text," +
                 "author_name text," +
-                "url text," +
+                "url text not null primary key," +
                 "thumbnail_pic_s text," +
                 "thumbnail_pic_s02 text," +
                 "thumbnail_pic_s03 text)");
