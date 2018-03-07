@@ -77,9 +77,22 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             ((JuheNewsViewHolder)holder).title.setText(juheNews.getTitle());
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setUri(Uri.parse(juheNews.getThumbnail_pic_s()))
+                    .setOldController(((JuheNewsViewHolder)holder).newsPic.getController())
                     .setAutoPlayAnimations(true)
                     .build();
             ((JuheNewsViewHolder)holder).newsPic.setController(controller);
+            DraweeController controller2 = Fresco.newDraweeControllerBuilder()
+                    .setUri(Uri.parse(juheNews.getThumbnail_pic_s02()))
+                    .setOldController(((JuheNewsViewHolder)holder).newsPic2.getController())
+                    .setAutoPlayAnimations(true)
+                    .build();
+            ((JuheNewsViewHolder)holder).newsPic2.setController(controller2);
+            DraweeController controller3 = Fresco.newDraweeControllerBuilder()
+                    .setUri(Uri.parse(juheNews.getThumbnail_pic_s03()))
+                    .setOldController(((JuheNewsViewHolder)holder).newsPic3.getController())
+                    .setAutoPlayAnimations(true)
+                    .build();
+            ((JuheNewsViewHolder)holder).newsPic3.setController(controller3);
         }
     }
 
@@ -137,12 +150,16 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
         private HandWriteTextView type;
         private TextView title;
         private SimpleDraweeView newsPic;
+        private SimpleDraweeView newsPic2;
+        private SimpleDraweeView newsPic3;
 
         public JuheNewsViewHolder(View itemView) {
             super(itemView);
             type = itemView.findViewById(R.id.type);
             title = itemView.findViewById(R.id.title);
             newsPic = itemView.findViewById(R.id.news_pic);
+            newsPic2 = itemView.findViewById(R.id.news_pic2);
+            newsPic3 = itemView.findViewById(R.id.news_pic3);
         }
     }
 }

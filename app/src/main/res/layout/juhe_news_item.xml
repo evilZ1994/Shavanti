@@ -43,11 +43,33 @@
             android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/news_pic"
-            android:layout_gravity="center"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            fresco:placeholderImage="@drawable/place_holder"/>
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/news_pic"
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="2dp"
+                fresco:placeholderImage="@drawable/place_holder"/>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/news_pic2"
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                fresco:placeholderImage="@drawable/place_holder"/>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/news_pic3"
+                android:layout_gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                fresco:placeholderImage="@drawable/place_holder"/>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
