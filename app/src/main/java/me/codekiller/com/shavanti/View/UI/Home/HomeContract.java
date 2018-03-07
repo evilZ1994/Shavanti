@@ -1,9 +1,8 @@
-package me.codekiller.com.shavanti.View.UI.Main;
+package me.codekiller.com.shavanti.View.UI.Home;
 
 import java.util.List;
 
 import me.codekiller.com.shavanti.Model.Bean.BaseBean;
-import me.codekiller.com.shavanti.Model.Bean.DayContent;
 import me.codekiller.com.shavanti.View.Base.BasePresenter;
 import me.codekiller.com.shavanti.View.Base.BaseView;
 
@@ -11,7 +10,7 @@ import me.codekiller.com.shavanti.View.Base.BaseView;
  * Created by Lollipop on 2018/2/28.
  */
 
-public interface MainContract {
+public interface HomeContract {
     interface View extends BaseView<Presenter>{
         void showLoading();
 
@@ -19,11 +18,15 @@ public interface MainContract {
 
         void showResults();
 
+        void loadToday();
+
         void showError(String msg);
     }
 
     interface Presenter extends BasePresenter<View>{
-        void loadAll(List<BaseBean> beans);
+        void loadLocal(List<BaseBean> beans);
+
+        void loadToday(List<BaseBean> beans);
 
         void loadJoke();
 

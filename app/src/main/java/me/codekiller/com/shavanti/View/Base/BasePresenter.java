@@ -5,10 +5,6 @@ package me.codekiller.com.shavanti.View.Base;
  */
 
 public interface BasePresenter<V extends BaseView> {
-    void attachView(V view);
 
-    void detachView();
-
-    boolean isViewAttached();
 }
 

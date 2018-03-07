@@ -2,18 +2,25 @@ package me.codekiller.com.shavanti.Model.Data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import me.codekiller.com.shavanti.Model.Bean.BaseBean;
+import me.codekiller.com.shavanti.Model.Bean.DateTitle;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
+import me.codekiller.com.shavanti.Utils.DateUtil;
 
 /**
  * Created by Lollipop on 2018/3/4.
@@ -38,6 +45,20 @@ public class SQLiteManager {
     }
 
     /**
+     * 保存作为分组依据的日期
+     */
+    public void storeKeyDate(){
+        database.beginTransaction();
+        String keyDate = DateUtil.dateFormat(new Date(), context);
+        ContentValues values = new ContentValues();
+        values.put("keyDate", keyDate);
+        database.insert("key_date", null, values);
+        values.clear();
+        database.setTransactionSuccessful();
+        database.endTransaction();
+    }
+
+    /**
      * 将joke保存到本地数据库
      * @param consumer
      * @param joke
@@ -48,7 +69,7 @@ public class SQLiteManager {
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
                 ContentValues values = new ContentValues();
-                values.put("date", joke.getDate());
+                values.put("keyDate", joke.getKeyDate());
                 values.put("title", joke.getTitle());
                 values.put("content", joke.getContent());
                 values.put("poster", joke.getPoster());
@@ -78,7 +99,7 @@ public class SQLiteManager {
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
                 ContentValues values = new ContentValues();
-                values.put("date", pic.getDate());
+                values.put("keyDate", pic.getKeyDate());
                 values.put("title", pic.getTitle());
                 values.put("thumburl", pic.getThumburl());
                 values.put("sourceurl", pic.getSourceurl());
@@ -110,6 +131,7 @@ public class SQLiteManager {
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
                 ContentValues values = new ContentValues();
+                values.put("keyDate", news.getKeyDate());
                 values.put("date", news.getDate());
                 values.put("uniquekey", news.getUniquekey());
                 values.put("title", news.getTitle());
@@ -130,5 +152,103 @@ public class SQLiteManager {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(consumer);
+    }
+
+    /**
+     * 查询本地数据
+     * @param consumer
+     */
+    public void loadLocal(Consumer<List<BaseBean>> consumer){
+        Observable.create(new ObservableOnSubscribe<List<BaseBean>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<BaseBean>> emitter) throws Exception {
+                List<BaseBean> beans = new ArrayList<>();
+                Cursor cursor = database.query("key_date", null, null, null, null, null, null);
+                if (cursor.moveToFirst()){
+                    do {
+                        String keyDate = cursor.getString(cursor.getColumnIndex("keyDate"));
+                        DateTitle dateTitle = new DateTitle();
+                        dateTitle.setKeyDate(keyDate);
+                        beans.add(dateTitle);
+                        beans.add(selectJokeByDate(keyDate));
+                        beans.add(selectFunnyPicByDate(keyDate));
+                        beans.add(selectJuheNewsByDate(keyDate));
+                    }while (cursor.moveToNext());
+                }
+                cursor.close();
+                emitter.onNext(beans);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 查询首页joke
+     * @param date
+     * @return
+     */
+    public LaifudaoJoke selectJokeByDate(String date){
+        Cursor cursor = database.query("laifudao_joke", null, "keyDate=?", new String[]{date}, null, null, null);
+        LaifudaoJoke joke = new LaifudaoJoke();
+        if (cursor.moveToFirst()){
+            joke.setKeyDate(date);
+            joke.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            joke.setPoster(cursor.getString(cursor.getColumnIndex("poster")));
+            joke.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            joke.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+        }
+        cursor.close();
+
+        return joke;
+    }
+
+    /**
+     * 查询首页funny pic
+     * @param date
+     * @return
+     */
+    public LaifudaoPic selectFunnyPicByDate(String date){
+        Cursor cursor = database.query("laifudao_pic", null, "keyDate=?", new String[]{date}, null, null, null);
+        LaifudaoPic pic = new LaifudaoPic();
+        if (cursor.moveToFirst()){
+            pic.setKeyDate(date);
+            pic.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            pic.setClassX(cursor.getString(cursor.getColumnIndex("class")));
+            pic.setThumburl(cursor.getString(cursor.getColumnIndex("thumburl")));
+            pic.setSourceurl(cursor.getString(cursor.getColumnIndex("sourceurl")));
+            pic.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+            pic.setHeight(cursor.getInt(cursor.getColumnIndex("height")));
+            pic.setWidth(cursor.getInt(cursor.getColumnIndex("width")));
+        }
+        cursor.close();
+
+        return pic;
+    }
+
+    /**
+     * 查询首页聚合新闻头条
+     * @param date
+     * @return
+     */
+    public JuheNews.ResultBean.DataBean selectJuheNewsByDate(String date){
+        Cursor cursor = database.query("juhe_news", null, "keyDate=?", new String[]{date}, null, null, null);
+        JuheNews.ResultBean.DataBean news = new JuheNews.ResultBean.DataBean();
+        if (cursor.moveToFirst()){
+            news.setKeyDate(date);
+            news.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            news.setUniquekey(cursor.getString(cursor.getColumnIndex("uniquekey")));
+            news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            news.setAuthor_name(cursor.getString(cursor.getColumnIndex("author_name")));
+            news.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+            news.setThumbnail_pic_s(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s")));
+            news.setThumbnail_pic_s02(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s02")));
+            news.setThumbnail_pic_s03(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s03")));
+            news.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+        }
+        cursor.close();
+
+        return news;
     }
 }

@@ -5,13 +5,13 @@ package me.codekiller.com.shavanti.Model.Bean;
  */
 
 public class BaseBean {
-    private String date;
+    private String keyDate;
 
-    public String getDate() {
-        return date;
+    public String getKeyDate() {
+        return keyDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setKeyDate(String keyDate) {
+        this.keyDate = keyDate;
     }
 }

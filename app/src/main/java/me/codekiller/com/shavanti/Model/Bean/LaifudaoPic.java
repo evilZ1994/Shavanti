@@ -18,8 +18,8 @@ public class LaifudaoPic extends BaseBean{
     private String title;
     private String thumburl;
     private String sourceurl;
-    private String height;
-    private String width;
+    private int height;
+    private int width;
     @com.google.gson.annotations.SerializedName("class")
     private String classX;
     private String url;
@@ -48,19 +48,19 @@ public class LaifudaoPic extends BaseBean{
         this.sourceurl = sourceurl;
     }
 
-    public String getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
-    public String getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(String width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 

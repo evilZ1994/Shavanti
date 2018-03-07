@@ -2,9 +2,7 @@ package me.codekiller.com.shavanti.Adapter;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +56,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
         int viewType = getItemViewType(position);
         if (viewType == DateTitle.class.hashCode()){
             DateTitle dateTitle = (DateTitle) beans.get(position);
-            ((DateTitleViewHolder)holder).dateTitle.setText(dateTitle.getDate());
+            ((DateTitleViewHolder)holder).dateTitle.setText(dateTitle.getKeyDate());
         }else if (viewType == LaifudaoJoke.class.hashCode()){
             LaifudaoJoke joke = (LaifudaoJoke)beans.get(position);
             ((JokeViewHolder)holder).type.setText(context.getResources().getString(R.string.joke_title));

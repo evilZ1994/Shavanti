@@ -33,15 +33,19 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        //存储日期，用于首页列表分组
+        sqLiteDatabase.execSQL("create table if not exists key_date(" +
+                "keyDate text not null)");
+
         sqLiteDatabase.execSQL("create table if not exists laifudao_joke(" +
-                "date text primary key," +
+                "keyDate text not null primary key," +
                 "title text," +
                 "content text," +
                 "poster text," +
                 "url text)");
 
         sqLiteDatabase.execSQL("create table if not exists laifudao_pic(" +
-                "date text primary key," +
+                "keyDate text not null primary key," +
                 "title text," +
                 "thumburl text," +
                 "sourceurl text," +
@@ -51,7 +55,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "url text)");
 
         sqLiteDatabase.execSQL("create table if not exists juhe_news(" +
-                "date text primary key," +
+                "keyDate text not null primary key," +
+                "date text," +
                 "uniquekey text," +
                 "title text," +
                 "category text," +

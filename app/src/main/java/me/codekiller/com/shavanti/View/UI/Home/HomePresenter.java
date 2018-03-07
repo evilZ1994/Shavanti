@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.View.UI.Main;
+package me.codekiller.com.shavanti.View.UI.Home;
 
 import android.content.Context;
 
@@ -21,54 +21,53 @@ import me.codekiller.com.shavanti.Utils.DateUtil;
  * Created by Lollipop on 2018/2/28.
  */
 
-public class MainPresenter implements MainContract.Presenter {
-    private MainContract.View view;
+public class HomePresenter implements HomeContract.Presenter {
+    private HomeContract.View view;
     private Context context;
     private DataManager dataManager;
     private SQLiteManager sqLiteManager;
     private List<BaseBean> beans;
 
-    public MainPresenter(Context context){
+    public HomePresenter(Context context, HomeContract.View view){
         this.context = context;
         this.dataManager = DataManager.getInstance();
         this.sqLiteManager = SQLiteManager.getInstance(context);
+        this.view = view;
+        view.setPresenter(this);
     }
 
     @Override
-    public void attachView(MainContract.View view) {
-        if (!isViewAttached()) {
-            this.view = view;
-        }
+    public void loadLocal(List<BaseBean> beanList) {
+        this.beans = beanList;
+        Consumer<List<BaseBean>> consumer = new Consumer<List<BaseBean>>() {
+            @Override
+            public void accept(List<BaseBean> localBeans) throws Exception {
+                beans.addAll(localBeans);
+                view.showResults();
+                view.loadToday();
+            }
+        };
+        sqLiteManager.loadLocal(consumer);
     }
 
     @Override
-    public void detachView() {
-        if (isViewAttached()) {
-            this.view = null;
-        }
-    }
-
-    @Override
-    public boolean isViewAttached() {
-        return view != null;
-    }
-
-    @Override
-    public void loadAll(List<BaseBean> beans) {
-        view.showLoading();
-
+    public void loadToday(List<BaseBean> beans) {
         this.beans = beans;
 
         DateTitle dateTitle = new DateTitle();
-        dateTitle.setDate(DateUtil.dateFormat(new Date(), context));
+        dateTitle.setKeyDate(DateUtil.dateFormat(new Date(), context));
 
         if (!beans.contains(dateTitle)) {
             beans.add(dateTitle);
+            storeKeyDate();
             loadJoke();
             loadFunnyPic();
             loadJuheNews();
         }
-        view.stopLoading();
+    }
+
+    private void storeKeyDate() {
+        sqLiteManager.storeKeyDate();
     }
 
     @Override
@@ -82,14 +81,16 @@ public class MainPresenter implements MainContract.Presenter {
             @Override
             public void onNext(List<LaifudaoJoke> laifudaoJokes) {
                 if (!laifudaoJokes.isEmpty()){
-                    beans.add(laifudaoJokes.get(0));
+                    LaifudaoJoke firstJoke = laifudaoJokes.get(0);
+                    firstJoke.setKeyDate(DateUtil.dateFormat(new Date(), context));
+                    beans.add(firstJoke);
                     //保存到本地
                     sqLiteManager.addLaifudaoJoke(new Consumer<String>() {
                         @Override
                         public void accept(String s) throws Exception {
                             //暂时不作处理
                         }
-                    }, laifudaoJokes.get(0));
+                    }, firstJoke);
                 }
             }
 
@@ -117,14 +118,16 @@ public class MainPresenter implements MainContract.Presenter {
             @Override
             public void onNext(List<LaifudaoPic> laifudaoPics) {
                 if (!laifudaoPics.isEmpty()){
-                    beans.add(laifudaoPics.get(0));
+                    LaifudaoPic firstPic = laifudaoPics.get(0);
+                    firstPic.setKeyDate(DateUtil.dateFormat(new Date(), context));
+                    beans.add(firstPic);
                     //保存到本地
                     sqLiteManager.addLaifudaoPic(new Consumer<String>() {
                         @Override
                         public void accept(String s) throws Exception {
 
                         }
-                    }, laifudaoPics.get(0));
+                    }, firstPic);
                 }
             }
 
@@ -152,14 +155,16 @@ public class MainPresenter implements MainContract.Presenter {
             @Override
             public void onNext(JuheNews juheNews) {
                 if (juheNews.getResult() != null && juheNews.getResult().getData() != null && !juheNews.getResult().getData().isEmpty()) {
-                    beans.add(juheNews.getResult().getData().get(0));
+                    JuheNews.ResultBean.DataBean firstNews = juheNews.getResult().getData().get(0);
+                    firstNews.setKeyDate(DateUtil.dateFormat(new Date(), context));
+                    beans.add(firstNews);
                     //保存到本地
                     sqLiteManager.addJuheNews(new Consumer<String>() {
                         @Override
                         public void accept(String s) throws Exception {
 
                         }
-                    }, juheNews.getResult().getData().get(0));
+                    }, firstNews);
                 }
             }
 

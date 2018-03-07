@@ -5,18 +5,10 @@ package me.codekiller.com.shavanti.Model.Bean;
  */
 
 public class DateTitle extends BaseBean{
-    private String date;
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof DateTitle && ((DateTitle)obj).date.equals(this.date);
+        return obj instanceof DateTitle && ((DateTitle)obj).getKeyDate()!=null && getKeyDate()!=null && ((DateTitle)obj).getKeyDate().equals(getKeyDate());
     }
 }

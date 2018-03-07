@@ -1,37 +1,27 @@
-package me.codekiller.com.shavanti.View.UI.Main;
+package me.codekiller.com.shavanti.View.UI.Home;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import me.codekiller.com.shavanti.Adapter.MainRecyclerAdapter;
-import me.codekiller.com.shavanti.Model.Bean.BaseBean;
-import me.codekiller.com.shavanti.Model.Bean.DayContent;
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.Utils.ActivityUtils;
 import me.codekiller.com.shavanti.Utils.DateUtil;
 import me.codekiller.com.shavanti.View.CustomViews.DayCountTextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MainContract.View {
+        implements NavigationView.OnNavigationItemSelectedListener {
     private NavigationView navigationView;
     private DayCountTextView dayCountTextView;
-    private RecyclerView recyclerView;
-    private MainRecyclerAdapter adapter;
-
-    private List<BaseBean> beans = new ArrayList<>();
-    private MainPresenter presenter = new MainPresenter(this);
+    private HomeFragment homeFragment;
+    private HomePresenter homePresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +30,13 @@ public class MainActivity extends AppCompatActivity
 
         initViews();
 
-        presenter.attachView(this);
-        presenter.loadAll(beans);
+        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (homeFragment == null) {
+            homeFragment = HomeFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), homeFragment, R.id.contentFrame);
+        }
+        homePresenter = new HomePresenter(this, homeFragment);
+
     }
 
     private void initViews() {
@@ -59,11 +54,6 @@ public class MainActivity extends AppCompatActivity
 
         dayCountTextView = findViewById(R.id.day_count);
         dayCountTextView.setText(String.valueOf(DateUtil.CountDays()));
-
-        recyclerView = findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MainRecyclerAdapter(this, beans);
-        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -121,30 +111,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void setPresenter(MainContract.Presenter presenter) {
-
-    }
-
-    @Override
-    public void showLoading() {
-
-    }
-
-    @Override
-    public void stopLoading() {
-
-    }
-
-    @Override
-    public void showResults() {
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void showError(String msg) {
-
     }
 }
