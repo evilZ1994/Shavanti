@@ -55,11 +55,14 @@ public class HomePresenter implements HomeContract.Presenter {
         this.beans = beans;
 
         DateTitle dateTitle = new DateTitle();
-        dateTitle.setKeyDate(DateUtil.dateFormat(new Date(), context));
+        Date today = new Date();
+        dateTitle.setKeyDate(DateUtil.dateFormat(today, context));
 
-        if (!beans.contains(dateTitle)) {
-            beans.add(dateTitle);
+        if (today.getTime()>=DateUtil.getLimitTime() && !beans.contains(dateTitle)) {
+            //把最新消息添加到最前
+            beans.add(0, dateTitle);
             storeKeyDate();
+            //以下添加进list时，index都为1
             loadJoke();
             loadFunnyPic();
             loadJuheNews();
@@ -84,7 +87,7 @@ public class HomePresenter implements HomeContract.Presenter {
                     for (LaifudaoJoke joke : laifudaoJokes){
                         joke.setKeyDate(DateUtil.dateFormat(new Date(), context));
                     }
-                    beans.add(laifudaoJokes.get(0));
+                    beans.add(1, laifudaoJokes.get(0));
                     //保存到本地
                     sqLiteManager.addLaifudaoJokes(new Consumer<String>() {
                         @Override
@@ -122,7 +125,7 @@ public class HomePresenter implements HomeContract.Presenter {
                     for (LaifudaoPic pic : laifudaoPics){
                         pic.setKeyDate(DateUtil.dateFormat(new Date(), context));
                     }
-                    beans.add(laifudaoPics.get(0));
+                    beans.add(1, laifudaoPics.get(0));
                     //保存到本地
                     sqLiteManager.addLaifudaoPic(new Consumer<String>() {
                         @Override
@@ -161,7 +164,7 @@ public class HomePresenter implements HomeContract.Presenter {
                     for (JuheNews.ResultBean.DataBean news : topNews){
                         news.setKeyDate(DateUtil.dateFormat(new Date(), context));
                     }
-                    beans.add(topNews.get(0));
+                    beans.add(1, topNews.get(0));
                     //保存到本地
                     sqLiteManager.addJuheNews(new Consumer<String>() {
                         @Override

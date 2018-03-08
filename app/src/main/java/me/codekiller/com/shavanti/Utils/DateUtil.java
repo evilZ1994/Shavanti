@@ -1,10 +1,13 @@
 package me.codekiller.com.shavanti.Utils;
 
 import android.content.Context;
+import android.os.Build;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import me.codekiller.com.shavanti.R;
 
@@ -30,5 +33,16 @@ public class DateUtil {
     public static String dateFormat(Date date, Context context){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getResources().getString(R.string.date_format), Locale.getDefault());
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 获取每天数据的刷新时间，早上8点
+     * @return
+     */
+    public static long getLimitTime(){
+        Calendar limitTime = Calendar.getInstance(TimeZone.getDefault());
+        limitTime.set(limitTime.get(Calendar.YEAR), limitTime.get(Calendar.MONTH), limitTime.get(Calendar.DATE), 8, 0);
+
+        return limitTime.getTimeInMillis();
     }
 }

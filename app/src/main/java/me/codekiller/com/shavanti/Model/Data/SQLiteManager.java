@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -128,7 +129,7 @@ public class SQLiteManager {
     /**
      * 将聚合数据新闻头条保存到本地数据库
      * @param consumer
-     * @param news
+     * @param topNews
      */
     public void addJuheNews(Consumer<String> consumer, final List<JuheNews.ResultBean.DataBean> topNews){
         Observable.create(new ObservableOnSubscribe<String>() {
@@ -171,7 +172,8 @@ public class SQLiteManager {
             public void subscribe(ObservableEmitter<List<BaseBean>> emitter) throws Exception {
                 List<BaseBean> beans = new ArrayList<>();
                 Cursor cursor = database.query("key_date", null, null, null, null, null, null);
-                if (cursor.moveToFirst()){
+                //从后往前添加，让最新日期显示在最前
+                if (cursor.moveToLast()){
                     do {
                         String keyDate = cursor.getString(cursor.getColumnIndex("keyDate"));
                         DateTitle dateTitle = new DateTitle();
@@ -180,9 +182,11 @@ public class SQLiteManager {
                         beans.add(selectJokeByDate(keyDate));
                         beans.add(selectFunnyPicByDate(keyDate));
                         beans.add(selectJuheNewsByDate(keyDate));
-                    }while (cursor.moveToNext());
+                    }while (cursor.moveToPrevious());
                 }
                 cursor.close();
+                //清除list中的空元素
+                beans.removeAll(Collections.singleton(null));
                 emitter.onNext(beans);
                 emitter.onComplete();
             }
@@ -198,17 +202,20 @@ public class SQLiteManager {
      */
     public LaifudaoJoke selectJokeByDate(String date){
         Cursor cursor = database.query("laifudao_joke", null, "keyDate=?", new String[]{date}, null, null, null);
-        LaifudaoJoke joke = new LaifudaoJoke();
+        LaifudaoJoke joke;
         if (cursor.moveToFirst()){
+            joke = new LaifudaoJoke();
             joke.setKeyDate(date);
             joke.setContent(cursor.getString(cursor.getColumnIndex("content")));
             joke.setPoster(cursor.getString(cursor.getColumnIndex("poster")));
             joke.setTitle(cursor.getString(cursor.getColumnIndex("title")));
             joke.setUrl(cursor.getString(cursor.getColumnIndex("url")));
-        }
-        cursor.close();
 
-        return joke;
+            cursor.close();
+            return joke;
+        }
+
+        return null;
     }
 
     /**
@@ -218,8 +225,9 @@ public class SQLiteManager {
      */
     public LaifudaoPic selectFunnyPicByDate(String date){
         Cursor cursor = database.query("laifudao_pic", null, "keyDate=?", new String[]{date}, null, null, null);
-        LaifudaoPic pic = new LaifudaoPic();
+        LaifudaoPic pic;
         if (cursor.moveToFirst()){
+            pic = new LaifudaoPic();
             pic.setKeyDate(date);
             pic.setTitle(cursor.getString(cursor.getColumnIndex("title")));
             pic.setClassX(cursor.getString(cursor.getColumnIndex("class")));
@@ -228,10 +236,12 @@ public class SQLiteManager {
             pic.setUrl(cursor.getString(cursor.getColumnIndex("url")));
             pic.setHeight(cursor.getInt(cursor.getColumnIndex("height")));
             pic.setWidth(cursor.getInt(cursor.getColumnIndex("width")));
-        }
-        cursor.close();
 
-        return pic;
+            cursor.close();
+            return pic;
+        }
+
+        return null;
     }
 
     /**
@@ -241,8 +251,9 @@ public class SQLiteManager {
      */
     public JuheNews.ResultBean.DataBean selectJuheNewsByDate(String date){
         Cursor cursor = database.query("juhe_news", null, "keyDate=?", new String[]{date}, null, null, null);
-        JuheNews.ResultBean.DataBean news = new JuheNews.ResultBean.DataBean();
+        JuheNews.ResultBean.DataBean news;
         if (cursor.moveToFirst()){
+            news = new JuheNews.ResultBean.DataBean();
             news.setKeyDate(date);
             news.setDate(cursor.getString(cursor.getColumnIndex("date")));
             news.setUniquekey(cursor.getString(cursor.getColumnIndex("uniquekey")));
@@ -253,9 +264,11 @@ public class SQLiteManager {
             news.setThumbnail_pic_s02(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s02")));
             news.setThumbnail_pic_s03(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s03")));
             news.setUrl(cursor.getString(cursor.getColumnIndex("url")));
-        }
-        cursor.close();
 
-        return news;
+            cursor.close();
+            return news;
+        }
+
+        return null;
     }
 }
