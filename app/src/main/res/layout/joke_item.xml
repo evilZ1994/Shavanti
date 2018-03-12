@@ -28,7 +28,7 @@
                 android:id="@+id/type"
                 android:text="@string/joke_title_demo"
                 android:gravity="center_vertical"
-                android:textColor="@color/laifudao_ico_color"
+                android:textColor="@color/laifudao_ico_blue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -46,6 +46,22 @@
         <TextView
             android:id="@+id/content"
             android:text="@string/joke_demo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:background="@color/line_gray"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"/>
+        <TextView
+            android:id="@+id/check_more"
+            android:text="@string/check_more"
+            android:textColor="@color/laifudao_ico_blue"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

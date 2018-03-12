@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.View.UI.Home;
+package me.codekiller.com.shavanti.UI.JokeMore;
 
 
 import android.os.Bundle;
@@ -12,39 +12,47 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.codekiller.com.shavanti.Adapter.MainRecyclerAdapter;
+import me.codekiller.com.shavanti.Adapter.MoreItemAdapter;
 import me.codekiller.com.shavanti.Model.Bean.BaseBean;
 import me.codekiller.com.shavanti.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
+ * Use the {@link MoreJokeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements HomeContract.View{
+public class MoreJokeFragment extends Fragment implements MokeJokeContract.View{
     private RecyclerView recyclerView;
-    private MainRecyclerAdapter adapter;
-    private HomeContract.Presenter presenter;
+    private MoreItemAdapter adapter;
 
-    private List<BaseBean> beans = new ArrayList<>();
+    private List<BaseBean> jokes = new ArrayList<>();
+    private MokeJokeContract.Presenter presenter;
+    private String date;
 
-    public HomeFragment() {
+    public MoreJokeFragment() {
         // Required empty public constructor
     }
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public static MoreJokeFragment newInstance() {
+        return new MoreJokeFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_more_joke, container, false);
+
+        Bundle bundle = getArguments();
+        if (bundle != null){
+           date = bundle.getString("date");
+        }
 
         initViews(view);
 
@@ -54,48 +62,26 @@ public class HomeFragment extends Fragment implements HomeContract.View{
     @Override
     public void onResume() {
         super.onResume();
-        if (beans.isEmpty()) {
-            presenter.loadLocal(beans);
+        if (jokes.isEmpty()){
+            presenter.loadJokes(jokes, date);
         }
     }
 
     @Override
     public void initViews(View view) {
-
+        adapter = new MoreItemAdapter(getContext(), jokes);
         recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MainRecyclerAdapter(getContext(), beans);
         recyclerView.setAdapter(adapter);
     }
 
     @Override
-    public void setPresenter(HomeContract.Presenter presenter) {
+    public void setPresenter(MokeJokeContract.Presenter presenter) {
         this.presenter = presenter;
-    }
-
-    @Override
-    public void showLoading() {
-
-    }
-
-    @Override
-    public void stopLoading() {
-
     }
 
     @Override
     public void showResults() {
         adapter.notifyDataSetChanged();
     }
-
-    @Override
-    public void loadToday() {
-        presenter.loadToday(beans);
-    }
-
-    @Override
-    public void showError(String msg) {
-
-    }
-
 }

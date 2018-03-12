@@ -1,6 +1,7 @@
-package me.codekiller.com.shavanti.View.UI.Home;
+package me.codekiller.com.shavanti.UI.Home;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,7 @@ public class HomePresenter implements HomeContract.Presenter {
         this.sqLiteManager = SQLiteManager.getInstance(context);
         this.view = view;
         view.setPresenter(this);
+        test();
     }
 
     @Override
@@ -50,6 +52,10 @@ public class HomePresenter implements HomeContract.Presenter {
         sqLiteManager.loadLocal(consumer);
     }
 
+    private void test() {
+
+    }
+
     @Override
     public void loadToday(List<BaseBean> beans) {
         this.beans = beans;
@@ -58,14 +64,41 @@ public class HomePresenter implements HomeContract.Presenter {
         Date today = new Date();
         dateTitle.setKeyDate(DateUtil.dateFormat(today, context));
 
-        if (today.getTime()>=DateUtil.getLimitTime() && !beans.contains(dateTitle)) {
+        if (today.getTime()>=DateUtil.getLimitTime()){
             //把最新消息添加到最前
-            beans.add(0, dateTitle);
-            storeKeyDate();
+            if (!beans.contains(dateTitle)) {
+                beans.add(0, dateTitle);
+                storeKeyDate();
+            }
             //以下添加进list时，index都为1
-            loadJoke();
-            loadFunnyPic();
-            loadJuheNews();
+            //判断是否已经加载
+            Date yesterday = new Date(today.getTime()-24*60*60*1000);
+            DateTitle yesterTitle = new DateTitle();
+            yesterTitle.setKeyDate(DateUtil.dateFormat(yesterday, context));
+            int jokeFlag = 0;
+            int funnyPicFlag = 0;
+            int juheFlag = 0;
+            for (BaseBean bean : beans){
+                if (bean.equals(yesterTitle)){
+                    //提前终止
+                    break;
+                }else if (bean instanceof LaifudaoJoke){
+                    jokeFlag = 1;
+                }else if (bean instanceof LaifudaoPic){
+                    funnyPicFlag = 1;
+                }else if (bean instanceof JuheNews.ResultBean.DataBean){
+                    juheFlag = 1;
+                }
+            }
+            if (jokeFlag == 0){
+                loadJoke();
+            }
+            if (funnyPicFlag == 0){
+                loadFunnyPic();
+            }
+            if (juheFlag == 0) {
+                loadJuheNews();
+            }
         }
     }
 
@@ -87,14 +120,16 @@ public class HomePresenter implements HomeContract.Presenter {
                     for (LaifudaoJoke joke : laifudaoJokes){
                         joke.setKeyDate(DateUtil.dateFormat(new Date(), context));
                     }
-                    beans.add(1, laifudaoJokes.get(0));
-                    //保存到本地
-                    sqLiteManager.addLaifudaoJokes(new Consumer<String>() {
-                        @Override
-                        public void accept(String s) throws Exception {
-                            //暂时不作处理
-                        }
-                    }, laifudaoJokes);
+                    if (!beans.contains(laifudaoJokes.get(0))) {
+                        beans.add(1, laifudaoJokes.get(0));
+                        //保存到本地
+                        sqLiteManager.addLaifudaoJokes(new Consumer<String>() {
+                            @Override
+                            public void accept(String s) throws Exception {
+                                //暂时不作处理
+                            }
+                        }, laifudaoJokes);
+                    }
                 }
             }
 
@@ -125,14 +160,16 @@ public class HomePresenter implements HomeContract.Presenter {
                     for (LaifudaoPic pic : laifudaoPics){
                         pic.setKeyDate(DateUtil.dateFormat(new Date(), context));
                     }
-                    beans.add(1, laifudaoPics.get(0));
-                    //保存到本地
-                    sqLiteManager.addLaifudaoPic(new Consumer<String>() {
-                        @Override
-                        public void accept(String s) throws Exception {
+                    if (!beans.contains(laifudaoPics.get(0))) {
+                        beans.add(1, laifudaoPics.get(0));
+                        //保存到本地
+                        sqLiteManager.addLaifudaoPic(new Consumer<String>() {
+                            @Override
+                            public void accept(String s) throws Exception {
 
-                        }
-                    }, laifudaoPics);
+                            }
+                        }, laifudaoPics);
+                    }
                 }
             }
 
@@ -164,14 +201,16 @@ public class HomePresenter implements HomeContract.Presenter {
                     for (JuheNews.ResultBean.DataBean news : topNews){
                         news.setKeyDate(DateUtil.dateFormat(new Date(), context));
                     }
-                    beans.add(1, topNews.get(0));
-                    //保存到本地
-                    sqLiteManager.addJuheNews(new Consumer<String>() {
-                        @Override
-                        public void accept(String s) throws Exception {
+                    if(!beans.contains(topNews.get(0))) {
+                        beans.add(1, topNews.get(0));
+                        //保存到本地
+                        sqLiteManager.addJuheNews(new Consumer<String>() {
+                            @Override
+                            public void accept(String s) throws Exception {
 
-                        }
-                    }, topNews);
+                            }
+                        }, topNews);
+                    }
                 }
             }
 

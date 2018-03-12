@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.View.UI.Home;
+package me.codekiller.com.shavanti.UI.Home;
 
 import java.util.List;
 

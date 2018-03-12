@@ -29,7 +29,7 @@
             <me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView
                 android:id="@+id/type"
                 android:text="@string/joke_title_demo"
-                android:textColor="@color/laifudao_ico_color"
+                android:textColor="@color/toutiao_ico_blue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

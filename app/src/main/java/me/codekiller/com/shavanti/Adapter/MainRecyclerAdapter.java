@@ -1,8 +1,10 @@
 package me.codekiller.com.shavanti.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.UI.JokeMore.MoreJokeActivity;
 import me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView;
 
 /**
@@ -58,10 +61,18 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             DateTitle dateTitle = (DateTitle) beans.get(position);
             ((DateTitleViewHolder)holder).dateTitle.setText(dateTitle.getKeyDate());
         }else if (viewType == LaifudaoJoke.class.hashCode()){
-            LaifudaoJoke joke = (LaifudaoJoke)beans.get(position);
+            final LaifudaoJoke joke = (LaifudaoJoke)beans.get(position);
             ((JokeViewHolder)holder).type.setText(context.getResources().getString(R.string.joke_title));
             ((JokeViewHolder)holder).title.setText(joke.getTitle());
-            ((JokeViewHolder)holder).content.setText(joke.getContent());
+            ((JokeViewHolder)holder).content.setText(Html.fromHtml(joke.getContent()));
+            ((JokeViewHolder)holder).checkMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, MoreJokeActivity.class);
+                    intent.putExtra("date", joke.getKeyDate());
+                    context.startActivity(intent);
+                }
+            });
         }else if (viewType == LaifudaoPic.class.hashCode()){
             LaifudaoPic pic = (LaifudaoPic)beans.get(position);
             ((FunnyPicViewHolder)holder).type.setText(context.getResources().getString(R.string.funny_pic_title));
@@ -124,12 +135,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
         private HandWriteTextView type;
         private TextView title;
         private TextView content;
+        private TextView checkMore;
 
         public JokeViewHolder(View itemView) {
             super(itemView);
             type = itemView.findViewById(R.id.type);
             title = itemView.findViewById(R.id.title);
             content = itemView.findViewById(R.id.content);
+            checkMore = itemView.findViewById(R.id.check_more);
         }
     }
 

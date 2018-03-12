@@ -3,6 +3,7 @@ package me.codekiller.com.shavanti.Utils;
 import android.content.Context;
 import android.os.Build;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +34,22 @@ public class DateUtil {
     public static String dateFormat(Date date, Context context){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getResources().getString(R.string.date_format), Locale.getDefault());
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * yyyy.MM.dd
+     * @param dateStr 传入yyyy年MM月dd日
+     */
+    public static String dateFormat(String dateStr, Context context) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getResources().getString(R.string.date_format), Locale.getDefault());
+        try {
+            Date date = simpleDateFormat.parse(dateStr);
+            simpleDateFormat = new SimpleDateFormat(context.getResources().getString(R.string.date_format2), Locale.getDefault());
+            return simpleDateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

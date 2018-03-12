@@ -14,6 +14,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -270,5 +271,91 @@ public class SQLiteManager {
         }
 
         return null;
+    }
+
+    /**
+     * 查询某天所有的joke
+     * @param observer
+     * @param keyDate
+     */
+    public void selectAllJokesByDate(Observer<List<LaifudaoJoke>> observer, String keyDate){
+        Cursor cursor = database.query("laifudao_joke", null, "keyDate=?", new String[]{keyDate}, null, null, null);
+        if (cursor.moveToFirst()){
+            List<LaifudaoJoke> jokes = new ArrayList<>();
+            do {
+                LaifudaoJoke joke = new LaifudaoJoke();
+                joke.setKeyDate(keyDate);
+                joke.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                joke.setPoster(cursor.getString(cursor.getColumnIndex("poster")));
+                joke.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                joke.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+
+                jokes.add(joke);
+            }while (cursor.moveToNext());
+
+            observer.onNext(jokes);
+            observer.onComplete();
+        }
+        cursor.close();
+    }
+
+    /**
+     * 查询某天所有的funny pic
+     * @param observer
+     * @param keyDate
+     */
+    public void selectAllFunnyPicsByDate(Observer<List<LaifudaoPic>> observer, String keyDate){
+        Cursor cursor = database.query("laifudao_pic", null, "keyDate=?", new String[]{keyDate}, null, null, null);
+        if (cursor.moveToFirst()){
+            List<LaifudaoPic> pics = new ArrayList<>();
+            do {
+                LaifudaoPic pic = new LaifudaoPic();
+                pic.setKeyDate(keyDate);
+                pic.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                pic.setClassX(cursor.getString(cursor.getColumnIndex("class")));
+                pic.setThumburl(cursor.getString(cursor.getColumnIndex("thumburl")));
+                pic.setSourceurl(cursor.getString(cursor.getColumnIndex("sourceurl")));
+                pic.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+                pic.setHeight(cursor.getInt(cursor.getColumnIndex("height")));
+                pic.setWidth(cursor.getInt(cursor.getColumnIndex("width")));
+
+                pics.add(pic);
+            }while (cursor.moveToNext());
+
+            observer.onNext(pics);
+            observer.onComplete();
+        }
+        cursor.close();
+    }
+
+    /**
+     * 查询某天所有的头条
+     * @param observer
+     * @param keyDate
+     */
+    public void selectAllJuheNewsByDate(Observer<List<JuheNews.ResultBean.DataBean>> observer, String keyDate){
+        Cursor cursor = database.query("juhe_news", null, "keyDate=?", new String[]{keyDate}, null, null, null);
+        if (cursor.moveToFirst()){
+            List<JuheNews.ResultBean.DataBean> newsList = new ArrayList<>();
+            do {
+                JuheNews.ResultBean.DataBean news = new JuheNews.ResultBean.DataBean();
+                news.setKeyDate(keyDate);
+                news.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                news.setUniquekey(cursor.getString(cursor.getColumnIndex("uniquekey")));
+                news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                news.setAuthor_name(cursor.getString(cursor.getColumnIndex("author_name")));
+                news.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+                news.setThumbnail_pic_s(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s")));
+                news.setThumbnail_pic_s02(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s02")));
+                news.setThumbnail_pic_s03(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s03")));
+                news.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+
+                newsList.add(news);
+            }while (cursor.moveToNext());
+
+            observer.onNext(newsList);
+            observer.onComplete();
+        }
+        cursor.close();
     }
 }

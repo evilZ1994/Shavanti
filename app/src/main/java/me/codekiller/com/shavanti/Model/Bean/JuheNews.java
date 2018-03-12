@@ -161,6 +161,11 @@ public class JuheNews {
             public void setThumbnail_pic_s03(String thumbnail_pic_s03) {
                 this.thumbnail_pic_s03 = thumbnail_pic_s03;
             }
+
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof DataBean && getUrl() != null && getUrl().equals(((DataBean)obj).getUrl());
+            }
         }
     }
 }

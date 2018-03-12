@@ -15,6 +15,14 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
+    <style name="LaifudaoJokeTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/laifudao_ico_blue</item>
+        <item name="colorPrimaryDark">@color/laifudao_ico_blue</item>
+        <item name="colorAccent">@color/laifudao_ico_blue</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

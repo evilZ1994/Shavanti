@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.View.UI.Home;
+package me.codekiller.com.shavanti.UI;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -9,9 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.UI.Home.HomeFragment;
+import me.codekiller.com.shavanti.UI.Home.HomePresenter;
 import me.codekiller.com.shavanti.Utils.ActivityUtils;
 import me.codekiller.com.shavanti.Utils.DateUtil;
 import me.codekiller.com.shavanti.View.CustomViews.DayCountTextView;

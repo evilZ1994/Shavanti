@@ -79,4 +79,9 @@ public class LaifudaoPic extends BaseBean{
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LaifudaoPic && getUrl() != null && getUrl().equals(((LaifudaoPic)obj).getUrl());
+    }
 }
