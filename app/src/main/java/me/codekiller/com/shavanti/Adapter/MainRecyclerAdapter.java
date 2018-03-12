@@ -22,6 +22,7 @@ import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.UI.FunnyPicMore.MoreFunnyPicActivity;
 import me.codekiller.com.shavanti.UI.JokeMore.MoreJokeActivity;
 import me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView;
 
@@ -74,7 +75,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                 }
             });
         }else if (viewType == LaifudaoPic.class.hashCode()){
-            LaifudaoPic pic = (LaifudaoPic)beans.get(position);
+            final LaifudaoPic pic = (LaifudaoPic)beans.get(position);
             ((FunnyPicViewHolder)holder).type.setText(context.getResources().getString(R.string.funny_pic_title));
             ((FunnyPicViewHolder)holder).title.setText(pic.getTitle());
             DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -82,6 +83,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                     .setAutoPlayAnimations(true)
                     .build();
             ((FunnyPicViewHolder)holder).funnyPic.setController(controller);
+            ((FunnyPicViewHolder)holder).checkMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MoreFunnyPicActivity.class);
+                    intent.putExtra("date", pic.getKeyDate());
+                    context.startActivity(intent);
+                }
+            });
         }else if (viewType == JuheNews.ResultBean.DataBean.class.hashCode()){
             JuheNews.ResultBean.DataBean juheNews = (JuheNews.ResultBean.DataBean) beans.get(position);
             ((JuheNewsViewHolder)holder).type.setText(context.getResources().getString(R.string.news_title));
@@ -150,12 +159,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
         private HandWriteTextView type;
         private TextView title;
         private SimpleDraweeView funnyPic;
+        private TextView checkMore;
 
         public FunnyPicViewHolder(View itemView) {
             super(itemView);
             type = itemView.findViewById(R.id.type);
             title = itemView.findViewById(R.id.title);
             funnyPic = itemView.findViewById(R.id.funny_pic);
+            checkMore = itemView.findViewById(R.id.check_more);
         }
     }
 
