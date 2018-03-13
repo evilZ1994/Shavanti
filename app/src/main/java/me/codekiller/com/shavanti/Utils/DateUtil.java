@@ -1,7 +1,6 @@
 package me.codekiller.com.shavanti.Utils;
 
 import android.content.Context;
-import android.os.Build;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +16,9 @@ import me.codekiller.com.shavanti.R;
  */
 
 public class DateUtil {
+    private static final long ONE_PIC_START_MILLIS = Long.valueOf("1346860800073");
+    private static final long ONE_ARTICAL_START_MILLIS = Long.valueOf("1250179200449");
+    private static final long DAY_MILLIS = Long.valueOf("86400000");
 
     public static long CountDays(){
         Calendar calStart = Calendar.getInstance();
@@ -61,5 +63,22 @@ public class DateUtil {
         limitTime.set(limitTime.get(Calendar.YEAR), limitTime.get(Calendar.MONTH), limitTime.get(Calendar.DATE), 8, 0);
 
         return limitTime.getTimeInMillis();
+    }
+
+    /**
+     * 获取One一个图片内容的网页索引
+     * @return
+     */
+    public static int getOnePicIndex(){
+        Date now = new Date();
+        return (int) ((now.getTime()- ONE_PIC_START_MILLIS)/ DAY_MILLIS);
+    }
+
+    /**
+     * 获取One一个的文章索引，文章并非当天文章
+     */
+    public static int getOneArticalIndex(){
+        Date now = new Date();
+        return (int) ((now.getTime()- ONE_ARTICAL_START_MILLIS)/ DAY_MILLIS);
     }
 }

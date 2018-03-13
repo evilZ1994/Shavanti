@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import me.codekiller.com.shavanti.Model.Bean.DateTitle;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
+import me.codekiller.com.shavanti.Model.Bean.OneArticle;
+import me.codekiller.com.shavanti.Model.Bean.OnePic;
 import me.codekiller.com.shavanti.R;
 import me.codekiller.com.shavanti.UI.FunnyPicMore.MoreFunnyPicActivity;
 import me.codekiller.com.shavanti.UI.JokeMore.MoreJokeActivity;
@@ -51,6 +54,10 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             return new FunnyPicViewHolder(layoutInflater.inflate(R.layout.funny_pic_item, parent, false));
         }else if (viewType == JuheNews.ResultBean.DataBean.class.hashCode()){
             return new JuheNewsViewHolder(layoutInflater.inflate(R.layout.juhe_news_item, parent, false));
+        }else if (viewType == OnePic.class.hashCode()){
+            return new OnePicViewHolder(layoutInflater.inflate(R.layout.one_pic_item, parent, false));
+        }else if (viewType == OneArticle.class.hashCode()){
+            return new OneArticleViewHolder(layoutInflater.inflate(R.layout.one_article_item, parent, false));
         }
         return null;
     }
@@ -82,6 +89,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                     .setUri(Uri.parse(pic.getThumburl()))
                     .setAutoPlayAnimations(true)
                     .build();
+            ((FunnyPicViewHolder)holder).funnyPic.setAspectRatio((float)pic.getWidth()/pic.getHeight());
             ((FunnyPicViewHolder)holder).funnyPic.setController(controller);
             ((FunnyPicViewHolder)holder).checkMore.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -113,6 +121,22 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                     .setAutoPlayAnimations(true)
                     .build();
             ((JuheNewsViewHolder)holder).newsPic3.setController(controller3);
+        }else if (viewType == OnePic.class.hashCode()){
+            OnePic onePic = (OnePic) beans.get(position);
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setUri(Uri.parse(onePic.getImgUrl()))
+                    .build();
+            ((OnePicViewHolder)holder).pic.setController(controller);
+            ((OnePicViewHolder)holder).description.setText(onePic.getDescription());
+        }else if (viewType == OneArticle.class.hashCode()){
+            OneArticle article = (OneArticle) beans.get(position);
+            ((OneArticleViewHolder)holder).title.setText(article.getTitle());
+            ((OneArticleViewHolder)holder).description.setText(article.getDescription());
+            if (article.getAuthor() == null || article.getAuthor().length() == 0){
+                ((OneArticleViewHolder)holder).author.setVisibility(View.GONE);
+            }else {
+                ((OneArticleViewHolder)holder).author.setText(article.getAuthor());
+            }
         }
     }
 
@@ -184,6 +208,30 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             newsPic = itemView.findViewById(R.id.news_pic);
             newsPic2 = itemView.findViewById(R.id.news_pic2);
             newsPic3 = itemView.findViewById(R.id.news_pic3);
+        }
+    }
+
+    public class OnePicViewHolder extends RecyclerView.ViewHolder{
+        private SimpleDraweeView pic;
+        private TextView description;
+
+        public OnePicViewHolder(View itemView) {
+            super(itemView);
+            pic = itemView.findViewById(R.id.one_pic);
+            description = itemView.findViewById(R.id.description);
+        }
+    }
+
+    public class OneArticleViewHolder extends RecyclerView.ViewHolder{
+        private TextView title;
+        private TextView description;
+        private TextView author;
+
+        public OneArticleViewHolder(View itemView) {
+            super(itemView);
+            title = itemView.findViewById(R.id.title);
+            description = itemView.findViewById(R.id.description);
+            author = itemView.findViewById(R.id.author);
         }
     }
 }

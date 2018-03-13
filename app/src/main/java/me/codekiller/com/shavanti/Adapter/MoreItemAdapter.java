@@ -59,6 +59,7 @@ public class MoreItemAdapter extends RecyclerView.Adapter {
                     .setUri(Uri.parse(pic.getThumburl()))
                     .setAutoPlayAnimations(true)
                     .build();
+            ((FunnyPicViewHolder)holder).funnyPic.setAspectRatio((float)pic.getWidth()/pic.getHeight());
             ((FunnyPicViewHolder)holder).funnyPic.setController(controller);
         }
     }

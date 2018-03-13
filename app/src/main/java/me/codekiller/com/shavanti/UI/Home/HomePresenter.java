@@ -14,6 +14,8 @@ import me.codekiller.com.shavanti.Model.Bean.DateTitle;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
+import me.codekiller.com.shavanti.Model.Bean.OneArticle;
+import me.codekiller.com.shavanti.Model.Bean.OnePic;
 import me.codekiller.com.shavanti.Model.Data.DataManager;
 import me.codekiller.com.shavanti.Model.Data.SQLiteManager;
 import me.codekiller.com.shavanti.Utils.DateUtil;
@@ -31,7 +33,7 @@ public class HomePresenter implements HomeContract.Presenter {
 
     public HomePresenter(Context context, HomeContract.View view){
         this.context = context;
-        this.dataManager = DataManager.getInstance();
+        this.dataManager = DataManager.getInstance(context);
         this.sqLiteManager = SQLiteManager.getInstance(context);
         this.view = view;
         view.setPresenter(this);
@@ -78,6 +80,8 @@ public class HomePresenter implements HomeContract.Presenter {
             int jokeFlag = 0;
             int funnyPicFlag = 0;
             int juheFlag = 0;
+            int onePicFlag = 0;
+            int oneArtFlag = 0;
             for (BaseBean bean : beans){
                 if (bean.equals(yesterTitle)){
                     //提前终止
@@ -88,6 +92,10 @@ public class HomePresenter implements HomeContract.Presenter {
                     funnyPicFlag = 1;
                 }else if (bean instanceof JuheNews.ResultBean.DataBean){
                     juheFlag = 1;
+                }else if (bean instanceof OnePic){
+                    onePicFlag = 1;
+                }else if (bean instanceof OneArticle){
+                    oneArtFlag = 1;
                 }
             }
             if (jokeFlag == 0){
@@ -98,6 +106,12 @@ public class HomePresenter implements HomeContract.Presenter {
             }
             if (juheFlag == 0) {
                 loadJuheNews();
+            }
+            if (onePicFlag == 0){
+                loadOnePic();
+            }
+            if (oneArtFlag == 0){
+                loadOneArticle();
             }
         }
     }
@@ -225,5 +239,63 @@ public class HomePresenter implements HomeContract.Presenter {
             }
         };
         dataManager.getJuheNews(observer);
+    }
+
+    @Override
+    public void loadOnePic() {
+        Observer<OnePic> observer = new Observer<OnePic>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(OnePic onePic) {
+                onePic.setKeyDate(DateUtil.dateFormat(new Date(), context));
+                if (!beans.contains(onePic)) {
+                    beans.add(1, onePic);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.i("OnePic", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                view.showResults();
+            }
+        };
+        dataManager.getOnePic(observer);
+    }
+
+    @Override
+    public void loadOneArticle() {
+        Observer<OneArticle> observer = new Observer<OneArticle>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(OneArticle oneArticle) {
+                oneArticle.setKeyDate(DateUtil.dateFormat(new Date(), context));
+                if (!beans.contains(oneArticle)){
+                    beans.add(1, oneArticle);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.i("OneArticle", e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                view.showResults();
+            }
+        };
+        dataManager.getOneArticle(observer);
     }
 }

@@ -16,8 +16,13 @@
     <string name="joke_demo">这是一段文字</string>
     <string name="joke_title">每日一笑</string>
     <string name="scrolled_to_bottom">已经到底了哦~</string>
-    <string name="funny_pic_title">有趣图片</string>
+    <string name="funny_pic_title">每日一趣</string>
     <string name="news_title">每日头条</string>
+    <string name="one_pic_title">每日一个</string>
+    <string name="one_article_title">每日一文</string>
+    <string name="not_found_note">404 Not Found</string>
+    <string name="one">「ONE · 一个」</string>
+    <string name="author_pre">作者/</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -33,5 +33,9 @@ public interface HomeContract {
         void loadFunnyPic();
 
         void loadJuheNews();
+
+        void loadOnePic();
+
+        void loadOneArticle();
     }
 }
