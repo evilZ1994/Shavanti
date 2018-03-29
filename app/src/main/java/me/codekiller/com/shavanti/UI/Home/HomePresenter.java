@@ -254,6 +254,12 @@ public class HomePresenter implements HomeContract.Presenter {
                 onePic.setKeyDate(DateUtil.dateFormat(new Date(), context));
                 if (!beans.contains(onePic)) {
                     beans.add(1, onePic);
+                    sqLiteManager.addOnePic(new Consumer<String>() {
+                        @Override
+                        public void accept(String s) throws Exception {
+
+                        }
+                    }, onePic);
                 }
             }
 
@@ -283,6 +289,12 @@ public class HomePresenter implements HomeContract.Presenter {
                 oneArticle.setKeyDate(DateUtil.dateFormat(new Date(), context));
                 if (!beans.contains(oneArticle)){
                     beans.add(1, oneArticle);
+                    sqLiteManager.addOneArticle(new Consumer<String>() {
+                        @Override
+                        public void accept(String s) throws Exception {
+
+                        }
+                    }, oneArticle);
                 }
             }
 

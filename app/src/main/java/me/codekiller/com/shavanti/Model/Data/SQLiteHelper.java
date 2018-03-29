@@ -65,6 +65,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "thumbnail_pic_s text," +
                 "thumbnail_pic_s02 text," +
                 "thumbnail_pic_s03 text)");
+
+        sqLiteDatabase.execSQL("create table if not exists one_pic(" +
+                "keyDate text not null," +
+                "url text not null primary key," +
+                "imgUrl text," +
+                "description text)");
+
+        sqLiteDatabase.execSQL("create table if not exists one_article(" +
+                "keyDate text not null," +
+                "title text," +
+                "description text," +
+                "article text," +
+                "author text," +
+                "url text not null primary key)");
     }
 
     @Override

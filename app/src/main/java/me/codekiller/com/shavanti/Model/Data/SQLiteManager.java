@@ -23,6 +23,8 @@ import me.codekiller.com.shavanti.Model.Bean.DateTitle;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
+import me.codekiller.com.shavanti.Model.Bean.OneArticle;
+import me.codekiller.com.shavanti.Model.Bean.OnePic;
 import me.codekiller.com.shavanti.Utils.DateUtil;
 
 /**
@@ -164,6 +166,64 @@ public class SQLiteManager {
     }
 
     /**
+     * 保存One一个的图片和文字到本地
+     * @param consumer
+     * @param onePic
+     */
+    public void addOnePic(Consumer<String> consumer, final OnePic onePic){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                database.beginTransaction();
+                ContentValues values = new ContentValues();
+                values.put("keyDate", onePic.getKeyDate());
+                values.put("url", onePic.getUrl());
+                values.put("imgUrl", onePic.getImgUrl());
+                values.put("description", onePic.getDescription());
+                database.insert("one_pic", null, values);
+                values.clear();
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+                emitter.onNext("done");
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 将One一个的文章保存到本地
+     * @param consumer
+     * @param article
+     */
+    public void addOneArticle(Consumer<String> consumer, final OneArticle article){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                database.beginTransaction();
+                ContentValues values = new ContentValues();
+                values.put("keyDate", article.getKeyDate());
+                values.put("title", article.getTitle());
+                values.put("description", article.getDescription());
+                values.put("article", article.getArticle());
+                values.put("url", article.getUrl());
+                values.put("author", article.getAuthor());
+                database.insert("one_article", null, values);
+                values.clear();
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+                emitter.onNext("done");
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
      * 查询本地数据
      * @param consumer
      */
@@ -183,6 +243,8 @@ public class SQLiteManager {
                         beans.add(selectJokeByDate(keyDate));
                         beans.add(selectFunnyPicByDate(keyDate));
                         beans.add(selectJuheNewsByDate(keyDate));
+                        beans.add(selectOnePicByDate(keyDate));
+                        beans.add(selectOneArticleByDate(keyDate));
                     }while (cursor.moveToPrevious());
                 }
                 cursor.close();
@@ -271,6 +333,46 @@ public class SQLiteManager {
         }
 
         return null;
+    }
+
+    /**
+     * 查询首页One一个的图片和文字
+     * @param date
+     * @return
+     */
+    public OnePic selectOnePicByDate(String date){
+        Cursor cursor = database.query("one_pic", null, "keyDate=?", new String[]{date}, null, null, null);
+        OnePic onePic = null;
+        if (cursor.moveToFirst()){
+            onePic = new OnePic();
+            onePic.setKeyDate(date);
+            onePic.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+            onePic.setImgUrl(cursor.getString(cursor.getColumnIndex("imgUrl")));
+            onePic.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+            cursor.close();
+        }
+        return onePic;
+    }
+
+    /**
+     * 查询首页One一个的文章
+     * @param date
+     * @return
+     */
+    public OneArticle selectOneArticleByDate(String date){
+        Cursor cursor = database.query("one_article", null, "keyDate=?", new String[]{date}, null, null, null);
+        OneArticle article = null;
+        if (cursor.moveToFirst()){
+            article = new OneArticle();
+            article.setKeyDate(date);
+            article.setAuthor(cursor.getString(cursor.getColumnIndex("author")));
+            article.setArticle(cursor.getString(cursor.getColumnIndex("article")));
+            article.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+            article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            article.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+            cursor.close();
+        }
+        return article;
     }
 
     /**

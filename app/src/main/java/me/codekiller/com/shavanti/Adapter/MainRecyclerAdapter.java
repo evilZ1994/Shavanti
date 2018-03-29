@@ -3,6 +3,7 @@ package me.codekiller.com.shavanti.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -27,6 +28,7 @@ import me.codekiller.com.shavanti.Model.Bean.OnePic;
 import me.codekiller.com.shavanti.R;
 import me.codekiller.com.shavanti.UI.FunnyPicMore.MoreFunnyPicActivity;
 import me.codekiller.com.shavanti.UI.JokeMore.MoreJokeActivity;
+import me.codekiller.com.shavanti.UI.OneArticle.OneArticleActivity;
 import me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView;
 
 /**
@@ -129,12 +131,24 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             ((OnePicViewHolder)holder).pic.setController(controller);
             ((OnePicViewHolder)holder).description.setText(onePic.getDescription());
         }else if (viewType == OneArticle.class.hashCode()){
-            OneArticle article = (OneArticle) beans.get(position);
+            final OneArticle article = (OneArticle) beans.get(position);
+            ((OneArticleViewHolder)holder).card.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, OneArticleActivity.class);
+                    intent.putExtra("title", article.getTitle());
+                    intent.putExtra("author", article.getAuthor());
+                    intent.putExtra("description", article.getDescription());
+                    intent.putExtra("article", article.getArticle());
+                    context.startActivity(intent);
+                }
+            });
             ((OneArticleViewHolder)holder).title.setText(article.getTitle());
             ((OneArticleViewHolder)holder).description.setText(article.getDescription());
             if (article.getAuthor() == null || article.getAuthor().length() == 0){
                 ((OneArticleViewHolder)holder).author.setVisibility(View.GONE);
             }else {
+                ((OneArticleViewHolder)holder).author.setVisibility(View.VISIBLE);
                 ((OneArticleViewHolder)holder).author.setText(article.getAuthor());
             }
         }
@@ -223,12 +237,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     public class OneArticleViewHolder extends RecyclerView.ViewHolder{
+        private CardView card;
         private TextView title;
         private TextView description;
         private TextView author;
 
         public OneArticleViewHolder(View itemView) {
             super(itemView);
+            card = itemView.findViewById(R.id.card);
             title = itemView.findViewById(R.id.title);
             description = itemView.findViewById(R.id.description);
             author = itemView.findViewById(R.id.author);

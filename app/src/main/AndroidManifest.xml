@@ -25,7 +25,13 @@
         <activity
             android:name=".UI.JokeMore.MoreJokeActivity"
             android:theme="@style/LaifudaoTheme" />
-        <activity android:name=".UI.FunnyPicMore.MoreFunnyPicActivity" android:theme="@style/LaifudaoTheme"/>
+        <activity
+            android:name=".UI.FunnyPicMore.MoreFunnyPicActivity"
+            android:theme="@style/LaifudaoTheme" />
+        <activity
+            android:name=".UI.OneArticle.OneArticleActivity"
+            android:theme="@style/OneTheme" />
+        <activity android:name=".UI.ImageView.ViewImageActivity"></activity>
     </application>
 
 </manifest>
