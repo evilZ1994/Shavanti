@@ -27,4 +27,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="check_more">查看更多</string>
+    <string name="save_pic">保存图片</string>
+    <string name="share_pic">分享图片</string>
+    <string name="share_to">分享到</string>
+    <string name="file_format_wrong">文件格式错误</string>
+    <string name="file_save_to">文件保存到：</string>
 </resources>

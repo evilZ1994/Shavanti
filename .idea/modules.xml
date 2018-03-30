@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Shavanti.iml" filepath="$PROJECT_DIR$/.idea/Shavanti.iml" />
       <module fileurl="file://$PROJECT_DIR$/Shavanti.iml" filepath="$PROJECT_DIR$/Shavanti.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

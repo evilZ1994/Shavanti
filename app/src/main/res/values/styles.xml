@@ -15,6 +15,11 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
+    <style name="AppTheme.JustNoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="LaifudaoTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/laifudao_ico_blue</item>
         <item name="colorPrimaryDark">@color/laifudao_ico_blue</item>

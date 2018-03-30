@@ -29,6 +29,8 @@ import me.codekiller.com.shavanti.R;
 import me.codekiller.com.shavanti.UI.FunnyPicMore.MoreFunnyPicActivity;
 import me.codekiller.com.shavanti.UI.JokeMore.MoreJokeActivity;
 import me.codekiller.com.shavanti.UI.OneArticle.OneArticleActivity;
+import me.codekiller.com.shavanti.UI.ZoomableView.ZoomableViewActivity;
+import me.codekiller.com.shavanti.Utils.DateUtil;
 import me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView;
 
 /**
@@ -124,11 +126,20 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                     .build();
             ((JuheNewsViewHolder)holder).newsPic3.setController(controller3);
         }else if (viewType == OnePic.class.hashCode()){
-            OnePic onePic = (OnePic) beans.get(position);
+            final OnePic onePic = (OnePic) beans.get(position);
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setUri(Uri.parse(onePic.getImgUrl()))
                     .build();
             ((OnePicViewHolder)holder).pic.setController(controller);
+            ((OnePicViewHolder)holder).pic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ZoomableViewActivity.class);
+                    intent.putExtra("image_uri", onePic.getImgUrl());
+                    intent.putExtra("title", DateUtil.dateFormat(onePic.getKeyDate(), context));
+                    context.startActivity(intent);
+                }
+            });
             ((OnePicViewHolder)holder).description.setText(onePic.getDescription());
         }else if (viewType == OneArticle.class.hashCode()){
             final OneArticle article = (OneArticle) beans.get(position);
