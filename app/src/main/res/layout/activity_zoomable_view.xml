@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.codekiller.com.shavanti.UI.ZoomableView.ZoomableViewActivity">
+    tools:context="me.codekiller.com.shavanti.UI.ImageView.ZoomableViewActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/zoomable_view_app_bar"

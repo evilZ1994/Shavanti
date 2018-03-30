@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.UI.ZoomableView;
+package me.codekiller.com.shavanti.UI.ImageView;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,7 +8,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,15 +20,12 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.facebook.binaryresource.FileBinaryResource;
-import com.facebook.cache.common.SimpleCacheKey;
 import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.interfaces.SimpleDraweeControllerBuilder;
 import com.facebook.imagepipeline.image.CloseableBitmap;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -40,6 +36,7 @@ import java.io.File;
 import me.codekiller.com.shavanti.R;
 import me.codekiller.com.shavanti.Utils.CommonUtil;
 import me.codekiller.com.shavanti.Utils.FileUtil;
+import me.codekiller.com.shavanti.Utils.FrescoUtil;
 import me.codekiller.com.shavanti.Utils.SDCardUtil;
 import me.codekiller.com.shavanti.View.Zoomable.ZoomableDraweeView;
 
@@ -64,6 +61,7 @@ public class ZoomableViewActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.zoomable_view_toolbar);
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
+        //toolbar必须在setSupportActionBar方法后设置这个监听器，否则无效
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,7 +127,7 @@ public class ZoomableViewActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //保存图片到本地
                     String path = SDCardUtil.getOnePicPath()+"/"+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
-                    savePic(path);
+                    FrescoUtil.savePic(path, imageUri, ZoomableViewActivity.this);
                     Toast.makeText(ZoomableViewActivity.this, getResources().getString(R.string.file_save_to)+path, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -139,7 +137,7 @@ public class ZoomableViewActivity extends AppCompatActivity {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     //先将图片缓存到本地文件中
                     String path = SDCardUtil.getCachePath()+"/"+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
-                    savePic(path);
+                    FrescoUtil.savePic(path, imageUri, ZoomableViewActivity.this);
                     File file = new File(path);
                     if (file.exists()) {
                         shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
@@ -171,31 +169,5 @@ public class ZoomableViewActivity extends AppCompatActivity {
             showBottomSheetDialog();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void savePic(final String path){
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(imageUri)
-                .setProgressiveRenderingEnabled(true)
-                .build();
-        DataSource<CloseableReference<CloseableImage>> dataSource = Fresco.getImagePipeline()
-                .fetchDecodedImage(imageRequest, this);
-        dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
-            @Override
-            protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                CloseableReference<CloseableImage> reference = dataSource.getResult();
-                CloseableImage image = reference.get();
-                if (image instanceof CloseableBitmap){
-                    CloseableBitmap closeableBitmap = (CloseableBitmap)image;
-                    Bitmap bitmap = closeableBitmap.getUnderlyingBitmap();
-
-                    FileUtil.saveBitmap(bitmap, path);
-                }
-            }
-
-            @Override
-            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-
-            }
-        }, CallerThreadExecutor.getInstance());
     }
 }

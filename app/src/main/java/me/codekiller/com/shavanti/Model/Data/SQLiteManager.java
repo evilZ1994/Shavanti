@@ -240,11 +240,11 @@ public class SQLiteManager {
                         DateTitle dateTitle = new DateTitle();
                         dateTitle.setKeyDate(keyDate);
                         beans.add(dateTitle);
+                        beans.add(selectOneArticleByDate(keyDate));
+                        beans.add(selectOnePicByDate(keyDate));
+                        beans.add(selectJuheNewsByDate(keyDate));
                         beans.add(selectJokeByDate(keyDate));
                         beans.add(selectFunnyPicByDate(keyDate));
-                        beans.add(selectJuheNewsByDate(keyDate));
-                        beans.add(selectOnePicByDate(keyDate));
-                        beans.add(selectOneArticleByDate(keyDate));
                     }while (cursor.moveToPrevious());
                 }
                 cursor.close();

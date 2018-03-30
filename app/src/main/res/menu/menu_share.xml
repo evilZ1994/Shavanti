@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/more_vertical"
-        android:title="@string/more"
-        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:id="@+id/menu_share"
+        android:icon="@drawable/ic_share_white_24dp"
+        android:title="@string/share"
         app:showAsAction="always"/>
 </menu>

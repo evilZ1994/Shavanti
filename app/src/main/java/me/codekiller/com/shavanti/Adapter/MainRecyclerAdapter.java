@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,10 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import me.codekiller.com.shavanti.Listener.MultiImageOnClickListener;
 import me.codekiller.com.shavanti.Model.Bean.BaseBean;
 import me.codekiller.com.shavanti.Model.Bean.DateTitle;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
@@ -28,8 +29,9 @@ import me.codekiller.com.shavanti.Model.Bean.OnePic;
 import me.codekiller.com.shavanti.R;
 import me.codekiller.com.shavanti.UI.FunnyPicMore.MoreFunnyPicActivity;
 import me.codekiller.com.shavanti.UI.JokeMore.MoreJokeActivity;
+import me.codekiller.com.shavanti.UI.JuheNewsDetail.JuheNewsDetailActivity;
 import me.codekiller.com.shavanti.UI.OneArticle.OneArticleActivity;
-import me.codekiller.com.shavanti.UI.ZoomableView.ZoomableViewActivity;
+import me.codekiller.com.shavanti.UI.ImageView.ZoomableViewActivity;
 import me.codekiller.com.shavanti.Utils.DateUtil;
 import me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView;
 
@@ -104,7 +106,16 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                 }
             });
         }else if (viewType == JuheNews.ResultBean.DataBean.class.hashCode()){
-            JuheNews.ResultBean.DataBean juheNews = (JuheNews.ResultBean.DataBean) beans.get(position);
+            final JuheNews.ResultBean.DataBean juheNews = (JuheNews.ResultBean.DataBean) beans.get(position);
+            ((JuheNewsViewHolder)holder).card.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, JuheNewsDetailActivity.class);
+                    intent.putExtra("url", juheNews.getUrl());
+                    intent.putExtra("title", juheNews.getTitle());
+                    context.startActivity(intent);
+                }
+            });
             ((JuheNewsViewHolder)holder).type.setText(context.getResources().getString(R.string.news_title));
             ((JuheNewsViewHolder)holder).title.setText(juheNews.getTitle());
             DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -125,6 +136,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                     .setAutoPlayAnimations(true)
                     .build();
             ((JuheNewsViewHolder)holder).newsPic3.setController(controller3);
+            //给图片设置点击事件
+            ArrayList<String> images = new ArrayList<>();
+            images.add(juheNews.getThumbnail_pic_s());
+            images.add(juheNews.getThumbnail_pic_s02());
+            images.add(juheNews.getThumbnail_pic_s03());
+            ((JuheNewsViewHolder)holder).newsPic.setOnClickListener(new MultiImageOnClickListener(context, 1, images));
+            ((JuheNewsViewHolder)holder).newsPic2.setOnClickListener(new MultiImageOnClickListener(context, 2, images));
+            ((JuheNewsViewHolder)holder).newsPic3.setOnClickListener(new MultiImageOnClickListener(context, 3, images));
         }else if (viewType == OnePic.class.hashCode()){
             final OnePic onePic = (OnePic) beans.get(position);
             DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -220,6 +239,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     public class JuheNewsViewHolder extends RecyclerView.ViewHolder{
+        private CardView card;
         private HandWriteTextView type;
         private TextView title;
         private SimpleDraweeView newsPic;
@@ -228,6 +248,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
 
         public JuheNewsViewHolder(View itemView) {
             super(itemView);
+            card = itemView.findViewById(R.id.juhe_news_item);
             type = itemView.findViewById(R.id.type);
             title = itemView.findViewById(R.id.title);
             newsPic = itemView.findViewById(R.id.news_pic);

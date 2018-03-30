@@ -36,6 +36,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="JuheNewsTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/toutiao_ico_blue</item>
+        <item name="colorPrimaryDark">@color/toutiao_ico_blue</item>
+        <item name="colorAccent">@color/toutiao_ico_blue</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

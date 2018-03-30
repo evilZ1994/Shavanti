@@ -32,4 +32,6 @@
     <string name="share_to">分享到</string>
     <string name="file_format_wrong">文件格式错误</string>
     <string name="file_save_to">文件保存到：</string>
+    <string name="share">分享</string>
+    <string name="more">更多</string>
 </resources>
