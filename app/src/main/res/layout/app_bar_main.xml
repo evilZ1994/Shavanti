@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".UI.MainActivity">
+    tools:context=".UI.Main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -23,6 +23,7 @@
             app:contentScrim="?attr/colorPrimary">
 
             <ImageView
+                android:id="@+id/home_bg_img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -39,7 +40,7 @@
                 android:layout_height="match_parent">
                 <me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView
                     android:text="@string/count_words_part1"
-                    android:textSize="24sp"
+                    android:textSize="28sp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:layout_width="match_parent"
@@ -47,14 +48,14 @@
                 <me.codekiller.com.shavanti.View.CustomViews.DayCountTextView
                     android:id="@+id/day_count"
                     android:text="1500"
-                    android:textSize="36sp"
+                    android:textSize="40sp"
                     android:textColor="@color/blue"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <me.codekiller.com.shavanti.View.CustomViews.HandWriteTextView
                     android:text="@string/count_words_part2"
-                    android:textSize="24sp"
+                    android:textSize="28sp"
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:layout_width="match_parent"

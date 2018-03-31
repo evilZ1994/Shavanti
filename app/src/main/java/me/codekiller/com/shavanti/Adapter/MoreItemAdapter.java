@@ -1,6 +1,7 @@
 package me.codekiller.com.shavanti.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -19,6 +20,7 @@ import me.codekiller.com.shavanti.Model.Bean.BaseBean;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoJoke;
 import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.UI.ImageView.ZoomableViewActivity;
 
 /**
  * Created by Lollipop on 2018/2/28.
@@ -53,7 +55,7 @@ public class MoreItemAdapter extends RecyclerView.Adapter {
             ((JokeViewHolder)holder).title.setText(joke.getTitle());
             ((JokeViewHolder)holder).content.setText(Html.fromHtml(joke.getContent()));
         }else if (viewType == LaifudaoPic.class.hashCode()){
-            LaifudaoPic pic = (LaifudaoPic)beans.get(position);
+            final LaifudaoPic pic = (LaifudaoPic)beans.get(position);
             ((FunnyPicViewHolder)holder).title.setText(pic.getTitle());
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setUri(Uri.parse(pic.getThumburl()))
@@ -61,6 +63,15 @@ public class MoreItemAdapter extends RecyclerView.Adapter {
                     .build();
             ((FunnyPicViewHolder)holder).funnyPic.setAspectRatio((float)pic.getWidth()/pic.getHeight());
             ((FunnyPicViewHolder)holder).funnyPic.setController(controller);
+            ((FunnyPicViewHolder)holder).funnyPic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ZoomableViewActivity.class);
+                    intent.putExtra("image_uri", pic.getThumburl());
+                    intent.putExtra("title", pic.getTitle());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

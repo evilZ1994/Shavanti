@@ -6,6 +6,9 @@ import android.util.Log;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -13,7 +16,9 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import main.java.com.UpYun;
 import me.codekiller.com.shavanti.Model.Api.Api;
 import me.codekiller.com.shavanti.Model.Api.RetrofitHelper;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
@@ -22,7 +27,10 @@ import me.codekiller.com.shavanti.Model.Bean.LaifudaoPic;
 import me.codekiller.com.shavanti.Model.Bean.OneArticle;
 import me.codekiller.com.shavanti.Model.Bean.OnePic;
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.Utils.CommonUtil;
 import me.codekiller.com.shavanti.Utils.DateUtil;
+import me.codekiller.com.shavanti.Utils.FileUtil;
+import me.codekiller.com.shavanti.Utils.SDCardUtil;
 
 /**
  * Created by Lollipop on 2018/2/28.
@@ -139,5 +147,50 @@ public class DataManager {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+    }
+
+    /**
+     * 检查又拍云的图片列表和本地主页背景图片列表，统计未下载的图片名
+     */
+    public void checkHomePic(Consumer<List<String>> consumer){
+        Observable.create(new ObservableOnSubscribe<List<String>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<String>> emitter) throws Exception {
+                UpYun upYun = new UpYun(CommonUtil.getB(context), CommonUtil.getN(context), CommonUtil.getP(context));
+                List<UpYun.FolderItem> folderItems = upYun.readDir(Api.HOME_PIC_PATH);
+                List<String> localPicNames = FileUtil.getFileNames(SDCardUtil.getHomePicPath());
+                List<String> lackPics = new ArrayList<>();
+                for(UpYun.FolderItem item : folderItems){
+                    if (!localPicNames.contains(item.name)){
+                        lackPics.add(item.name);
+                    }
+                }
+                emitter.onNext(lackPics);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 下载又拍云的图片
+     * @param lackPics 图片列表
+     */
+    public void downloadHomePic(Consumer<String> consumer, final List<String> lackPics){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                for (String picName : lackPics){
+                    String remotePath = Api.HOME_PIC_PATH + picName;
+                    String localPath = SDCardUtil.getHomePicPath() + picName;
+                    UpYun upYun = new UpYun(CommonUtil.getB(context), CommonUtil.getN(context), CommonUtil.getP(context));
+                    File file = new File(localPath);
+                    upYun.readFile(remotePath, file);
+                }
+                emitter.onNext("done");
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
     }
 }

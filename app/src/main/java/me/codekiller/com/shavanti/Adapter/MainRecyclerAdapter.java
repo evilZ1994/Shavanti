@@ -75,6 +75,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             DateTitle dateTitle = (DateTitle) beans.get(position);
             ((DateTitleViewHolder)holder).dateTitle.setText(dateTitle.getKeyDate());
         }else if (viewType == LaifudaoJoke.class.hashCode()){
+            //来福岛笑话
             final LaifudaoJoke joke = (LaifudaoJoke)beans.get(position);
             ((JokeViewHolder)holder).type.setText(context.getResources().getString(R.string.joke_title));
             ((JokeViewHolder)holder).title.setText(joke.getTitle());
@@ -88,6 +89,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                 }
             });
         }else if (viewType == LaifudaoPic.class.hashCode()){
+            //来福岛搞笑图片
             final LaifudaoPic pic = (LaifudaoPic)beans.get(position);
             ((FunnyPicViewHolder)holder).type.setText(context.getResources().getString(R.string.funny_pic_title));
             ((FunnyPicViewHolder)holder).title.setText(pic.getTitle());
@@ -97,6 +99,15 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                     .build();
             ((FunnyPicViewHolder)holder).funnyPic.setAspectRatio((float)pic.getWidth()/pic.getHeight());
             ((FunnyPicViewHolder)holder).funnyPic.setController(controller);
+            ((FunnyPicViewHolder)holder).funnyPic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ZoomableViewActivity.class);
+                    intent.putExtra("image_uri", pic.getThumburl());
+                    intent.putExtra("title", pic.getTitle());
+                    context.startActivity(intent);
+                }
+            });
             ((FunnyPicViewHolder)holder).checkMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -106,6 +117,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                 }
             });
         }else if (viewType == JuheNews.ResultBean.DataBean.class.hashCode()){
+            //聚合新闻头条
             final JuheNews.ResultBean.DataBean juheNews = (JuheNews.ResultBean.DataBean) beans.get(position);
             ((JuheNewsViewHolder)holder).card.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,6 +157,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             ((JuheNewsViewHolder)holder).newsPic2.setOnClickListener(new MultiImageOnClickListener(context, 2, images));
             ((JuheNewsViewHolder)holder).newsPic3.setOnClickListener(new MultiImageOnClickListener(context, 3, images));
         }else if (viewType == OnePic.class.hashCode()){
+            //One图片
             final OnePic onePic = (OnePic) beans.get(position);
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setUri(Uri.parse(onePic.getImgUrl()))
@@ -161,6 +174,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
             });
             ((OnePicViewHolder)holder).description.setText(onePic.getDescription());
         }else if (viewType == OneArticle.class.hashCode()){
+            //One文章
             final OneArticle article = (OneArticle) beans.get(position);
             ((OneArticleViewHolder)holder).card.setOnClickListener(new View.OnClickListener() {
                 @Override

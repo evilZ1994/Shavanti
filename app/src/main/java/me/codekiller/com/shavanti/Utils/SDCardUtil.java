@@ -7,11 +7,13 @@ import java.io.File;
 public class SDCardUtil {
 
     //文件根目录
-    public static final String ROOT_DIR = "/Shavanti";
+    private static final String ROOT_DIR = "/Shavanti";
     //One图片存放目录
-    public static final String ONE_PIC = "/OnePic";
+    private static final String ONE_PIC = "/OnePic";
     //缓存目录
-    public static final String CACHE = "/cache";
+    private static final String CACHE = "/cache";
+    //首页图片目录
+    private static final String HOME_PIC = "/HomePic";
 
     /**
      * 初始化文件目录
@@ -24,6 +26,8 @@ public class SDCardUtil {
             createFileDir(ROOT_DIR + ONE_PIC);
             //创建缓存目录
             createFileDir(ROOT_DIR + CACHE);
+            //创建首页图片目录
+            createFileDir(ROOT_DIR + HOME_PIC);
         }
     }
 
@@ -57,7 +61,7 @@ public class SDCardUtil {
      */
     public static String getCachePath(){
         if (checkSdCard()){
-            return getSdPath()+ROOT_DIR+CACHE;
+            return getSdPath()+ROOT_DIR+CACHE+"/";
         }else {
             return null;
         }
@@ -68,7 +72,18 @@ public class SDCardUtil {
      */
     public static String getOnePicPath(){
         if (checkSdCard()){
-            return getSdPath()+ROOT_DIR+ONE_PIC;
+            return getSdPath()+ROOT_DIR+ONE_PIC+"/";
+        }else {
+            return null;
+        }
+    }
+
+    /**
+     * 获取主页背景图片路径
+     */
+    public static String getHomePicPath(){
+        if (checkSdCard()){
+            return getSdPath()+ROOT_DIR+HOME_PIC+"/";
         }else {
             return null;
         }

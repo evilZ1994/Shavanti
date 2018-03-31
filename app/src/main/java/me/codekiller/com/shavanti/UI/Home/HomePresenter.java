@@ -37,7 +37,6 @@ public class HomePresenter implements HomeContract.Presenter {
         this.sqLiteManager = SQLiteManager.getInstance(context);
         this.view = view;
         view.setPresenter(this);
-        test();
     }
 
     @Override
@@ -52,10 +51,6 @@ public class HomePresenter implements HomeContract.Presenter {
             }
         };
         sqLiteManager.loadLocal(consumer);
-    }
-
-    private void test() {
-
     }
 
     @Override

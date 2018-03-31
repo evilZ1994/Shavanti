@@ -113,7 +113,7 @@ public class MultiImageActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     //保存图片到本地
-                    String path = SDCardUtil.getOnePicPath()+"/"+ CommonUtil.getOnePicName(images.get(index-1))+".jpeg";
+                    String path = SDCardUtil.getOnePicPath()+ CommonUtil.getOnePicName(images.get(index-1))+".jpeg";
                     FrescoUtil.savePic(path, Uri.parse(images.get(index-1)), MultiImageActivity.this);
                     Toast.makeText(MultiImageActivity.this, getResources().getString(R.string.file_save_to)+path, Toast.LENGTH_SHORT).show();
                 }
@@ -123,7 +123,7 @@ public class MultiImageActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     //先将图片缓存到本地文件中
-                    String path = SDCardUtil.getCachePath()+"/"+ CommonUtil.getOnePicName(images.get(index-1))+".jpeg";
+                    String path = SDCardUtil.getCachePath()+ CommonUtil.getOnePicName(images.get(index-1))+".jpeg";
                     FrescoUtil.savePic(path, Uri.parse(images.get(index-1)), MultiImageActivity.this);
                     File file = new File(path);
                     if (file.exists()) {

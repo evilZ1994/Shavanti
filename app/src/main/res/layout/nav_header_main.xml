@@ -9,7 +9,8 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:src="@drawable/background"
+        android:id="@+id/nav_header_bg_img"
+        android:src="@drawable/timg"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

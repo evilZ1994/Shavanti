@@ -126,7 +126,7 @@ public class ZoomableViewActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     //保存图片到本地
-                    String path = SDCardUtil.getOnePicPath()+"/"+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
+                    String path = SDCardUtil.getOnePicPath()+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
                     FrescoUtil.savePic(path, imageUri, ZoomableViewActivity.this);
                     Toast.makeText(ZoomableViewActivity.this, getResources().getString(R.string.file_save_to)+path, Toast.LENGTH_SHORT).show();
                 }
@@ -136,7 +136,7 @@ public class ZoomableViewActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     //先将图片缓存到本地文件中
-                    String path = SDCardUtil.getCachePath()+"/"+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
+                    String path = SDCardUtil.getCachePath()+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
                     FrescoUtil.savePic(path, imageUri, ZoomableViewActivity.this);
                     File file = new File(path);
                     if (file.exists()) {
