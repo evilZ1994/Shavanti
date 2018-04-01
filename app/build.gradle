@@ -39,4 +39,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.2'
     implementation 'bouncycastle:bouncycastle-jce-jdk13:112'
     implementation 'com.upyun:java-sdk:3.20'
+    implementation 'com.facebook.stetho:stetho:1.4.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.4.1'
 }

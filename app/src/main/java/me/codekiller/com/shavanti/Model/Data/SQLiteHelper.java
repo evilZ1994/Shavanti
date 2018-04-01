@@ -10,10 +10,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static SQLiteHelper instance;
+    private static final String DATABASE_NAME = "local_db";
+    private static final int FIRST_VERSION = 1;
+    private static final int CURRENT_VERSION = 2;
 
     public static SQLiteHelper getInstance(Context context){
         if (instance == null){
-            instance = new SQLiteHelper(context, "local_db", null, 1);
+            instance = new SQLiteHelper(context, DATABASE_NAME, null, CURRENT_VERSION);
         }
 
         return instance;
@@ -79,10 +82,38 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "article text," +
                 "author text," +
                 "url text not null primary key)");
+
+        onUpgrade(sqLiteDatabase, FIRST_VERSION, CURRENT_VERSION);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        if (oldVersion == 1){
+            sqLiteDatabase.execSQL("create table if not exists juhe_news_cache(" +
+                    "date text," +
+                    "uniquekey text," +
+                    "title text," +
+                    "category text," +
+                    "author_name text," +
+                    "url text not null primary key," +
+                    "thumbnail_pic_s text," +
+                    "thumbnail_pic_s02 text," +
+                    "thumbnail_pic_s03 text)");
 
+            sqLiteDatabase.execSQL("create table if not exists juhe_news_bookmark(" +
+                    "date text," +
+                    "uniquekey text," +
+                    "title text," +
+                    "category text," +
+                    "author_name text," +
+                    "url text not null primary key," +
+                    "thumbnail_pic_s text," +
+                    "thumbnail_pic_s02 text," +
+                    "thumbnail_pic_s03 text)");
+        }
+
+        if (newVersion-oldVersion > 1){
+            onUpgrade(sqLiteDatabase, oldVersion+1, newVersion);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.UI.News;
+package me.codekiller.com.shavanti.UI.SimpleNews;
 
 import java.util.List;
 
@@ -13,10 +13,16 @@ public interface NewsPageContract {
 
         void stopLoading();
 
+        void onLocalLoaded(List<JuheNews.ResultBean.DataBean> dataBeans);
+
         void onDataLoaded(List<JuheNews.ResultBean.DataBean> dataBeans);
     }
 
     interface Presenter extends BasePresenter<View>{
+        void loadLocal(String type);
+
         void loadData(String type);
+
+        void saveNewData(List<JuheNews.ResultBean.DataBean> dataBeans);
     }
 }

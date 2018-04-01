@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.UI.News;
+package me.codekiller.com.shavanti.UI.SimpleNews;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -48,6 +48,7 @@ public class NewsMainActivity extends AppCompatActivity {
             NewsPageFragment fragment = NewsPageFragment.getInstance();
             Bundle bundle = new Bundle();
             bundle.putString("type", types.get(titles.indexOf(title)));
+            bundle.putString("typeCN", title);
             fragment.setArguments(bundle);
             new NewsPagePresenter(fragment, this);
             fragments.add(fragment);

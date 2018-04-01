@@ -1,4 +1,4 @@
-package me.codekiller.com.shavanti.UI.News;
+package me.codekiller.com.shavanti.UI.SimpleNews;
 
 
 import android.content.res.Resources;
@@ -32,6 +32,8 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
     private NewsPageContract.Presenter presenter;
 
     private String type;
+    //中文类型
+    private String typeCN;
     private boolean isViewCreated = false;
     private boolean isUIVisible = false;
 
@@ -50,6 +52,7 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
         View view = inflater.inflate(R.layout.fragment_news_page, container, false);
 
         type = getArguments().getString("type");
+        typeCN = getArguments().getString("typeCN");
 
         initViews(view);
 
@@ -109,12 +112,26 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
     }
 
     @Override
+    public void onLocalLoaded(List<JuheNews.ResultBean.DataBean> dataBeans) {
+        for (JuheNews.ResultBean.DataBean dataBean : dataBeans){
+            if (!this.dataBeans.contains(dataBean)){
+                this.dataBeans.add(dataBean);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        //本地加载完成后，加载网络数据
+        presenter.loadData(type);
+    }
+
+    @Override
     public void onDataLoaded(List<JuheNews.ResultBean.DataBean> dataBeans) {
         int updateCount = 0;
+        List<JuheNews.ResultBean.DataBean> newData = new ArrayList<>();
         for (JuheNews.ResultBean.DataBean dataBean : dataBeans){
             if (!this.dataBeans.contains(dataBean)){
                 this.dataBeans.add(dataBean);
                 updateCount++;
+                newData.add(dataBean);
             }
         }
         adapter.notifyDataSetChanged();
@@ -122,11 +139,15 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
             Resources resources = getContext().getResources();
             Toast.makeText(getContext(), resources.getString(R.string.news_update_count_part1)+updateCount+resources.getString(R.string.news_update_count_part2), Toast.LENGTH_SHORT).show();
         }
+        //缓存新的数据
+        if (!newData.isEmpty()){
+            presenter.saveNewData(newData);
+        }
     }
 
     private void lazyLoad(){
         if (isViewCreated && isUIVisible && dataBeans.isEmpty()){
-            presenter.loadData(type);
+            presenter.loadLocal(typeCN);
         }
     }
 }

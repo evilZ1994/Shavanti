@@ -36,15 +36,15 @@ public class SQLiteManager {
     private Context context;
     private SQLiteDatabase database;
 
-    public static SQLiteManager getInstance(Context context){
-        if (instance == null){
+    public static SQLiteManager getInstance(Context context) {
+        if (instance == null) {
             instance = new SQLiteManager(context);
         }
 
         return instance;
     }
 
-    public SQLiteManager(Context context){
+    public SQLiteManager(Context context) {
         this.context = context;
         database = SQLiteHelper.getWritableDatabase(context);
     }
@@ -52,7 +52,7 @@ public class SQLiteManager {
     /**
      * 保存作为分组依据的日期
      */
-    public void storeKeyDate(){
+    public void storeKeyDate() {
         database.beginTransaction();
         String keyDate = DateUtil.dateFormat(new Date(), context);
         ContentValues values = new ContentValues();
@@ -65,10 +65,11 @@ public class SQLiteManager {
 
     /**
      * 将joke保存到本地数据库
+     *
      * @param consumer
      * @param jokes
      */
-    public void addLaifudaoJokes(Consumer<String> consumer, final List<LaifudaoJoke> jokes){
+    public void addLaifudaoJokes(Consumer<String> consumer, final List<LaifudaoJoke> jokes) {
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
@@ -96,11 +97,12 @@ public class SQLiteManager {
 
     /**
      * 将搞笑图片保存到本地数据库
+     *
      * @param consumer
      * @param pics
      */
-    public void addLaifudaoPic(Consumer<String> consumer, final List<LaifudaoPic> pics){
-        Observable.create(new ObservableOnSubscribe<String>(){
+    public void addLaifudaoPic(Consumer<String> consumer, final List<LaifudaoPic> pics) {
+        Observable.create(new ObservableOnSubscribe<String>() {
 
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
@@ -130,28 +132,62 @@ public class SQLiteManager {
     }
 
     /**
-     * 将聚合数据新闻头条保存到本地数据库
+     * 将首页聚合数据新闻头条保存到本地数据库（只有一条新闻）
+     *
      * @param consumer
      * @param topNews
      */
-    public void addJuheNews(Consumer<String> consumer, final List<JuheNews.ResultBean.DataBean> topNews){
+    public void addJuheNews(Consumer<String> consumer, final JuheNews.ResultBean.DataBean topNews) {
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 database.beginTransaction();
-                for (JuheNews.ResultBean.DataBean news : topNews) {
+
+                ContentValues values = new ContentValues();
+                values.put("keyDate", topNews.getKeyDate());
+                values.put("date", topNews.getDate());
+                values.put("uniquekey", topNews.getUniquekey());
+                values.put("title", topNews.getTitle());
+                values.put("category", topNews.getCategory());
+                values.put("author_name", topNews.getAuthor_name());
+                values.put("url", topNews.getUrl());
+                values.put("thumbnail_pic_s", topNews.getThumbnail_pic_s());
+                values.put("thumbnail_pic_s02", topNews.getThumbnail_pic_s02());
+                values.put("thumbnail_pic_s03", topNews.getThumbnail_pic_s03());
+                database.insert("juhe_news", null, values);
+                values.clear();
+
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+                emitter.onNext("done");
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 缓存新闻
+     */
+    public void addJuheNewsCache(Consumer<String> consumer, final List<JuheNews.ResultBean.DataBean> beans){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                database.beginTransaction();
+                for(JuheNews.ResultBean.DataBean bean : beans) {
                     ContentValues values = new ContentValues();
-                    values.put("keyDate", news.getKeyDate());
-                    values.put("date", news.getDate());
-                    values.put("uniquekey", news.getUniquekey());
-                    values.put("title", news.getTitle());
-                    values.put("category", news.getCategory());
-                    values.put("author_name", news.getAuthor_name());
-                    values.put("url", news.getUrl());
-                    values.put("thumbnail_pic_s", news.getThumbnail_pic_s());
-                    values.put("thumbnail_pic_s02", news.getThumbnail_pic_s02());
-                    values.put("thumbnail_pic_s03", news.getThumbnail_pic_s03());
-                    database.insert("juhe_news", null, values);
+                    values.put("date", bean.getDate());
+                    values.put("uniquekey", bean.getUniquekey());
+                    values.put("title", bean.getTitle());
+                    values.put("category", bean.getCategory());
+                    values.put("author_name", bean.getAuthor_name());
+                    values.put("url", bean.getUrl());
+                    values.put("thumbnail_pic_s", bean.getThumbnail_pic_s());
+                    values.put("thumbnail_pic_s02", bean.getThumbnail_pic_s02());
+                    values.put("thumbnail_pic_s03", bean.getThumbnail_pic_s03());
+                    database.insert("juhe_news_cache", null, values);
                     values.clear();
                 }
                 database.setTransactionSuccessful();
@@ -166,11 +202,110 @@ public class SQLiteManager {
     }
 
     /**
-     * 保存One一个的图片和文字到本地
-     * @param consumer
-     * @param onePic
+     * 根据分类查询缓存的新闻，这里的分类为中文
      */
-    public void addOnePic(Consumer<String> consumer, final OnePic onePic){
+    public void selectJuheNewsCacheByType(Consumer<List<JuheNews.ResultBean.DataBean>> consumer, final String type){
+        Observable.create(new ObservableOnSubscribe<List<JuheNews.ResultBean.DataBean>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<JuheNews.ResultBean.DataBean>> emitter) throws Exception {
+                Cursor cursor = database.query("juhe_news_cache", null, "category=?", new String[]{type}, null, null, null);
+                List<JuheNews.ResultBean.DataBean> dataBeans = new ArrayList<>();
+                if (cursor.moveToFirst()){
+                    do {
+                        JuheNews.ResultBean.DataBean dataBean = new JuheNews.ResultBean.DataBean();
+                        dataBean.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                        dataBean.setUniquekey(cursor.getString(cursor.getColumnIndex("uniquekey")));
+                        dataBean.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                        dataBean.setAuthor_name(cursor.getString(cursor.getColumnIndex("author_name")));
+                        dataBean.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+                        dataBean.setThumbnail_pic_s(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s")));
+                        dataBean.setThumbnail_pic_s02(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s02")));
+                        dataBean.setThumbnail_pic_s03(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s03")));
+                        dataBean.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+
+                        dataBeans.add(dataBean);
+                    }while (cursor.moveToNext());
+                }
+
+                emitter.onNext(dataBeans);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 保存收藏的新闻
+     */
+    public void addJuheNewsBookmark(Consumer<String> consumer, final JuheNews.ResultBean.DataBean news){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                database.beginTransaction();
+
+                ContentValues values = new ContentValues();
+                values.put("date", news.getDate());
+                values.put("uniquekey", news.getUniquekey());
+                values.put("title", news.getTitle());
+                values.put("category", news.getCategory());
+                values.put("author_name", news.getAuthor_name());
+                values.put("url", news.getUrl());
+                values.put("thumbnail_pic_s", news.getThumbnail_pic_s());
+                values.put("thumbnail_pic_s02", news.getThumbnail_pic_s02());
+                values.put("thumbnail_pic_s03", news.getThumbnail_pic_s03());
+                database.insert("juhe_news_bookmark", null, values);
+                values.clear();
+
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+                emitter.onNext("done");
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 查询收藏的新闻
+     */
+    public void selectJuheNewsBookmark(Consumer<List<JuheNews.ResultBean.DataBean>> consumer){
+        Observable.create(new ObservableOnSubscribe<List<JuheNews.ResultBean.DataBean>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<JuheNews.ResultBean.DataBean>> emitter) throws Exception {
+                Cursor cursor = database.query("juhe_news_bookmark", null, null, null, null, null, null);
+                List<JuheNews.ResultBean.DataBean> dataBeans = new ArrayList<>();
+                if (cursor.moveToFirst()){
+                    do {
+                        JuheNews.ResultBean.DataBean dataBean = new JuheNews.ResultBean.DataBean();
+                        dataBean.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                        dataBean.setUniquekey(cursor.getString(cursor.getColumnIndex("uniquekey")));
+                        dataBean.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                        dataBean.setAuthor_name(cursor.getString(cursor.getColumnIndex("author_name")));
+                        dataBean.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+                        dataBean.setThumbnail_pic_s(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s")));
+                        dataBean.setThumbnail_pic_s02(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s02")));
+                        dataBean.setThumbnail_pic_s03(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s03")));
+                        dataBean.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+
+                        dataBeans.add(dataBean);
+                    }while (cursor.moveToNext());
+                }
+
+                emitter.onNext(dataBeans);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 保存One一个的图片和文字到本地
+     */
+    public void addOnePic(Consumer<String> consumer, final OnePic onePic) {
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
@@ -195,10 +330,11 @@ public class SQLiteManager {
 
     /**
      * 将One一个的文章保存到本地
+     *
      * @param consumer
      * @param article
      */
-    public void addOneArticle(Consumer<String> consumer, final OneArticle article){
+    public void addOneArticle(Consumer<String> consumer, final OneArticle article) {
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
@@ -225,16 +361,17 @@ public class SQLiteManager {
 
     /**
      * 查询本地数据
+     *
      * @param consumer
      */
-    public void loadLocal(Consumer<List<BaseBean>> consumer){
+    public void loadLocal(Consumer<List<BaseBean>> consumer) {
         Observable.create(new ObservableOnSubscribe<List<BaseBean>>() {
             @Override
             public void subscribe(ObservableEmitter<List<BaseBean>> emitter) throws Exception {
                 List<BaseBean> beans = new ArrayList<>();
                 Cursor cursor = database.query("key_date", null, null, null, null, null, null);
                 //从后往前添加，让最新日期显示在最前
-                if (cursor.moveToLast()){
+                if (cursor.moveToLast()) {
                     do {
                         String keyDate = cursor.getString(cursor.getColumnIndex("keyDate"));
                         DateTitle dateTitle = new DateTitle();
@@ -245,7 +382,7 @@ public class SQLiteManager {
                         beans.add(selectJuheNewsByDate(keyDate));
                         beans.add(selectJokeByDate(keyDate));
                         beans.add(selectFunnyPicByDate(keyDate));
-                    }while (cursor.moveToPrevious());
+                    } while (cursor.moveToPrevious());
                 }
                 cursor.close();
                 //清除list中的空元素
@@ -260,13 +397,14 @@ public class SQLiteManager {
 
     /**
      * 查询首页joke
+     *
      * @param date
      * @return
      */
-    public LaifudaoJoke selectJokeByDate(String date){
+    public LaifudaoJoke selectJokeByDate(String date) {
         Cursor cursor = database.query("laifudao_joke", null, "keyDate=?", new String[]{date}, null, null, null);
         LaifudaoJoke joke;
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             joke = new LaifudaoJoke();
             joke.setKeyDate(date);
             joke.setContent(cursor.getString(cursor.getColumnIndex("content")));
@@ -283,13 +421,14 @@ public class SQLiteManager {
 
     /**
      * 查询首页funny pic
+     *
      * @param date
      * @return
      */
-    public LaifudaoPic selectFunnyPicByDate(String date){
+    public LaifudaoPic selectFunnyPicByDate(String date) {
         Cursor cursor = database.query("laifudao_pic", null, "keyDate=?", new String[]{date}, null, null, null);
         LaifudaoPic pic;
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             pic = new LaifudaoPic();
             pic.setKeyDate(date);
             pic.setTitle(cursor.getString(cursor.getColumnIndex("title")));
@@ -309,13 +448,14 @@ public class SQLiteManager {
 
     /**
      * 查询首页聚合新闻头条
+     *
      * @param date
      * @return
      */
-    public JuheNews.ResultBean.DataBean selectJuheNewsByDate(String date){
+    public JuheNews.ResultBean.DataBean selectJuheNewsByDate(String date) {
         Cursor cursor = database.query("juhe_news", null, "keyDate=?", new String[]{date}, null, null, null);
         JuheNews.ResultBean.DataBean news;
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             news = new JuheNews.ResultBean.DataBean();
             news.setKeyDate(date);
             news.setDate(cursor.getString(cursor.getColumnIndex("date")));
@@ -337,13 +477,14 @@ public class SQLiteManager {
 
     /**
      * 查询首页One一个的图片和文字
+     *
      * @param date
      * @return
      */
-    public OnePic selectOnePicByDate(String date){
+    public OnePic selectOnePicByDate(String date) {
         Cursor cursor = database.query("one_pic", null, "keyDate=?", new String[]{date}, null, null, null);
         OnePic onePic = null;
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             onePic = new OnePic();
             onePic.setKeyDate(date);
             onePic.setUrl(cursor.getString(cursor.getColumnIndex("url")));
@@ -356,13 +497,14 @@ public class SQLiteManager {
 
     /**
      * 查询首页One一个的文章
+     *
      * @param date
      * @return
      */
-    public OneArticle selectOneArticleByDate(String date){
+    public OneArticle selectOneArticleByDate(String date) {
         Cursor cursor = database.query("one_article", null, "keyDate=?", new String[]{date}, null, null, null);
         OneArticle article = null;
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             article = new OneArticle();
             article.setKeyDate(date);
             article.setAuthor(cursor.getString(cursor.getColumnIndex("author")));
@@ -377,12 +519,13 @@ public class SQLiteManager {
 
     /**
      * 查询某天所有的joke
+     *
      * @param observer
      * @param keyDate
      */
-    public void selectAllJokesByDate(Observer<List<LaifudaoJoke>> observer, String keyDate){
+    public void selectAllJokesByDate(Observer<List<LaifudaoJoke>> observer, String keyDate) {
         Cursor cursor = database.query("laifudao_joke", null, "keyDate=?", new String[]{keyDate}, null, null, null);
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             List<LaifudaoJoke> jokes = new ArrayList<>();
             do {
                 LaifudaoJoke joke = new LaifudaoJoke();
@@ -393,7 +536,7 @@ public class SQLiteManager {
                 joke.setUrl(cursor.getString(cursor.getColumnIndex("url")));
 
                 jokes.add(joke);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             observer.onNext(jokes);
             observer.onComplete();
@@ -403,12 +546,13 @@ public class SQLiteManager {
 
     /**
      * 查询某天所有的funny pic
+     *
      * @param observer
      * @param keyDate
      */
-    public void selectAllFunnyPicsByDate(Observer<List<LaifudaoPic>> observer, String keyDate){
+    public void selectAllFunnyPicsByDate(Observer<List<LaifudaoPic>> observer, String keyDate) {
         Cursor cursor = database.query("laifudao_pic", null, "keyDate=?", new String[]{keyDate}, null, null, null);
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             List<LaifudaoPic> pics = new ArrayList<>();
             do {
                 LaifudaoPic pic = new LaifudaoPic();
@@ -422,7 +566,7 @@ public class SQLiteManager {
                 pic.setWidth(cursor.getInt(cursor.getColumnIndex("width")));
 
                 pics.add(pic);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             observer.onNext(pics);
             observer.onComplete();
@@ -432,12 +576,13 @@ public class SQLiteManager {
 
     /**
      * 查询某天所有的头条
+     *
      * @param observer
      * @param keyDate
      */
-    public void selectAllJuheNewsByDate(Observer<List<JuheNews.ResultBean.DataBean>> observer, String keyDate){
+    public void selectAllJuheNewsByDate(Observer<List<JuheNews.ResultBean.DataBean>> observer, String keyDate) {
         Cursor cursor = database.query("juhe_news", null, "keyDate=?", new String[]{keyDate}, null, null, null);
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             List<JuheNews.ResultBean.DataBean> newsList = new ArrayList<>();
             do {
                 JuheNews.ResultBean.DataBean news = new JuheNews.ResultBean.DataBean();
@@ -453,7 +598,7 @@ public class SQLiteManager {
                 news.setUrl(cursor.getString(cursor.getColumnIndex("url")));
 
                 newsList.add(news);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             observer.onNext(newsList);
             observer.onComplete();

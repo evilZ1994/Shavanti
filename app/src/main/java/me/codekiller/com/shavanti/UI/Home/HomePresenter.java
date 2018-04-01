@@ -207,18 +207,18 @@ public class HomePresenter implements HomeContract.Presenter {
             public void onNext(JuheNews juheNews) {
                 List<JuheNews.ResultBean.DataBean> topNews = juheNews.getResult().getData();
                 if (juheNews.getResult() != null && topNews != null && !topNews.isEmpty()) {
-                    for (JuheNews.ResultBean.DataBean news : topNews){
-                        news.setKeyDate(DateUtil.dateFormat(new Date(), context));
-                    }
-                    if(!beans.contains(topNews.get(0))) {
-                        beans.add(1, topNews.get(0));
+                    //取到第一条新闻
+                    JuheNews.ResultBean.DataBean news = topNews.get(0);
+                    news.setKeyDate(DateUtil.dateFormat(new Date(), context));
+                    if(!beans.contains(news)) {
+                        beans.add(1, news);
                         //保存到本地
                         sqLiteManager.addJuheNews(new Consumer<String>() {
                             @Override
                             public void accept(String s) throws Exception {
 
                             }
-                        }, topNews);
+                        }, news);
                     }
                 }
             }
