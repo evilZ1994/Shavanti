@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
     implementation 'com.facebook.fresco:fresco:0.13.0'
-    implementation 'com.facebook.fresco:animated-gif:0.12.0'
+    implementation 'com.facebook.fresco:animated-gif:0.13.0'
     implementation 'org.jsoup:jsoup:1.11.2'
     implementation 'bouncycastle:bouncycastle-jce-jdk13:112'
     implementation 'com.upyun:java-sdk:3.20'

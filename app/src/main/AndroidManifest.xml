@@ -39,7 +39,10 @@
         <activity
             android:name=".UI.ImageView.MultiImageActivity"
             android:theme="@style/AppTheme.JustNoActionBar" />
-        <activity android:name=".UI.JuheNewsDetail.JuheNewsDetailActivity"
+        <activity
+            android:name=".UI.JuheNewsDetail.JuheNewsDetailActivity"
+            android:theme="@style/JuheNewsTheme" />
+        <activity android:name=".UI.News.NewsMainActivity"
             android:theme="@style/JuheNewsTheme"/>
     </application>
 

@@ -91,6 +91,17 @@ public class DataManager {
     }
 
     /**
+     * 根据分类获取聚合新闻
+     */
+    public void getJuheNewsByType(Observer<JuheNews> observer, String type){
+        RetrofitHelper.getJuheNewsService()
+                .requestJuheNewsByType(juheAppKey, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    /**
      * 获取One一个的图片
      * @param observer
      */

@@ -1,5 +1,6 @@
 package me.codekiller.com.shavanti.UI.Main;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import main.java.com.UpYun;
 import me.codekiller.com.shavanti.R;
 import me.codekiller.com.shavanti.UI.Home.HomeFragment;
 import me.codekiller.com.shavanti.UI.Home.HomePresenter;
+import me.codekiller.com.shavanti.UI.News.NewsMainActivity;
 import me.codekiller.com.shavanti.Utils.ActivityUtils;
 import me.codekiller.com.shavanti.Utils.CommonUtil;
 import me.codekiller.com.shavanti.Utils.DateUtil;
@@ -44,9 +46,12 @@ public class MainActivity extends AppCompatActivity
     private DayCountTextView dayCountTextView;
     private ImageView homeBgImg;
     private ImageView navHeaderBgImg;
+    private DrawerLayout drawer;
 
     private HomeFragment homeFragment;
     private HomePresenter homePresenter;
+
+    private int checked_item = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +96,22 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                //取消item的选中状态
+                if (checked_item != -1){
+                    navigationView.getMenu().findItem(checked_item).setChecked(false);
+                }
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         dayCountTextView = findViewById(R.id.day_count);
@@ -106,11 +120,12 @@ public class MainActivity extends AppCompatActivity
         homeBgImg = findViewById(R.id.home_bg_img);
         navigationView = findViewById(R.id.nav_view);
         navHeaderBgImg = navigationView.getHeaderView(0).findViewById(R.id.nav_header_bg_img);
+
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -120,19 +135,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -147,11 +157,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_simple_news) {
+            //极简新闻
+            Intent intent = new Intent(this, NewsMainActivity.class);
+            startActivity(intent);
+            //记住当前点击的item，按返回键时取消选中状态
+            checked_item = id;
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -160,8 +174,8 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        /*DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
 

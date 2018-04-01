@@ -35,4 +35,10 @@
     <string name="share">分享</string>
     <string name="more">更多</string>
     <string name="n">a966b86a6f4f92d450b36ace4ea1be04</string>
+    <string name="simple_news">极简新闻</string>
+    <string name="bookmark">收藏</string>
+    <string name="news_date_demo">2018-03-01 10:39</string>
+    <string name="news_author_demo">来源：看看新闻网</string>
+    <string name="news_update_count_part1">更新了</string>
+    <string name="news_update_count_part2">篇新闻</string>
 </resources>

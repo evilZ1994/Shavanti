@@ -129,6 +129,10 @@ public class ZoomableViewActivity extends AppCompatActivity {
                     String path = SDCardUtil.getOnePicPath()+ CommonUtil.getOnePicName(imageUri.toString())+".jpeg";
                     FrescoUtil.savePic(path, imageUri, ZoomableViewActivity.this);
                     Toast.makeText(ZoomableViewActivity.this, getResources().getString(R.string.file_save_to)+path, Toast.LENGTH_SHORT).show();
+
+                    if (dialog.isShowing()){
+                        dialog.dismiss();
+                    }
                 }
             });
             shareItem.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +149,10 @@ public class ZoomableViewActivity extends AppCompatActivity {
                         startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.share_to)));
                     }else {
                         Toast.makeText(ZoomableViewActivity.this, R.string.file_format_wrong, Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (dialog.isShowing()){
+                        dialog.dismiss();
                     }
                 }
             });

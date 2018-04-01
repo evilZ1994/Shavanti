@@ -45,7 +45,7 @@ public class JuheNewsDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_share, menu);
+        getMenuInflater().inflate(R.menu.menu_news_detail, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

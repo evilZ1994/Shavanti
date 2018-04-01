@@ -116,6 +116,10 @@ public class MultiImageActivity extends AppCompatActivity {
                     String path = SDCardUtil.getOnePicPath()+ CommonUtil.getOnePicName(images.get(index-1))+".jpeg";
                     FrescoUtil.savePic(path, Uri.parse(images.get(index-1)), MultiImageActivity.this);
                     Toast.makeText(MultiImageActivity.this, getResources().getString(R.string.file_save_to)+path, Toast.LENGTH_SHORT).show();
+
+                    if (dialog.isShowing()){
+                        dialog.dismiss();
+                    }
                 }
             });
             shareItem.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +136,10 @@ public class MultiImageActivity extends AppCompatActivity {
                         startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.share_to)));
                     }else {
                         Toast.makeText(MultiImageActivity.this, R.string.file_format_wrong, Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (dialog.isShowing()){
+                        dialog.dismiss();
                     }
                 }
             });
