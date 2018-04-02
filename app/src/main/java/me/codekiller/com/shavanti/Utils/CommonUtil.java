@@ -24,7 +24,7 @@ public class CommonUtil {
 
     public static String getB(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("day", Context.MODE_PRIVATE);
-        return new DES(new DES(readP(context)).decrypt(preferences.getString("k", "50d760b44f0ds684f")+preferences.getString("d", "805ba0bb5981f601"))).decrypt(readB(context));
+        return new DES(new DES(readP(context)).decrypt(preferences.getString("k", "50d760b44f0ds684f")+preferences.getString("d", "a36e49c5d8c4b22c"))).decrypt(readB(context));
     }
 
     public static String getP(Context context){

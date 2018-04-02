@@ -9,15 +9,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 
 import me.codekiller.com.shavanti.R;
+import me.codekiller.com.shavanti.Utils.ActivityUtils;
 
 public class JuheNewsDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private WebView webView;
 
-    private String url;
+    private String toolbar_title;
+    private String uniquekey;
     private String title;
+    private String date;
+    private String category;
+    private String author_name;
+    private String url;
+    private String thumbnail_pic_s;
+    private String thumbnail_pic_s02;
+    private String thumbnail_pic_s03;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,13 +34,19 @@ public class JuheNewsDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_juhe_news_detail);
 
         Intent intent = getIntent();
-        url = intent.getStringExtra("url");
+        toolbar_title = intent.getStringExtra("toolbar_title");
+        uniquekey = intent.getStringExtra("uniquekey");
         title = intent.getStringExtra("title");
+        date = intent.getStringExtra("date");
+        category = intent.getStringExtra("category");
+        author_name = intent.getStringExtra("author_name");
+        url = intent.getStringExtra("url");
+        thumbnail_pic_s = intent.getStringExtra("thumbnail_pic_s");
+        thumbnail_pic_s02 = intent.getStringExtra("thumbnail_pic_s02");
+        thumbnail_pic_s03 = intent.getStringExtra("thumbnail_pic_s03");
 
         toolbar = findViewById(R.id.news_detail_toolbar);
-        webView = findViewById(R.id.news_detail_web_view);
-
-        toolbar.setTitle(R.string.news_title);
+        toolbar.setTitle(toolbar_title);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,23 +55,23 @@ public class JuheNewsDetailActivity extends AppCompatActivity {
             }
         });
 
-        webView.loadUrl(url);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_news_detail, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_share){
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, title+url);
-            startActivity(Intent.createChooser(intent, getResources().getString(R.string.share_to)));
+        JuheNewsDetailFragment fragment = (JuheNewsDetailFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+        if (fragment == null){
+            fragment = JuheNewsDetailFragment.newInstance();
+            Bundle bundle = new Bundle();
+            bundle.putString("toolbar_title", toolbar_title);
+            bundle.putString("uniquekey", uniquekey);
+            bundle.putString("title", title);
+            bundle.putString("date", date);
+            bundle.putString("category", category);
+            bundle.putString("author_name", author_name);
+            bundle.putString("url", url);
+            bundle.putString("thumbnail_pic_s", thumbnail_pic_s);
+            bundle.putString("thumbnail_pic_s02", thumbnail_pic_s02);
+            bundle.putString("thumbnail_pic_s03", thumbnail_pic_s03);
+            fragment.setArguments(bundle);
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), fragment, R.id.container);
         }
-        return super.onOptionsItemSelected(item);
+        new JuheNewsDetailPresenter(fragment, this);
     }
 }

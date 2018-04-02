@@ -9,16 +9,19 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import me.codekiller.com.shavanti.Model.Bean.JuheNews;
 import me.codekiller.com.shavanti.Model.Data.DataManager;
+import me.codekiller.com.shavanti.Model.Data.SQLiteHelper;
 import me.codekiller.com.shavanti.Model.Data.SQLiteManager;
 
 public class NewsPagePresenter implements NewsPageContract.Presenter {
     private NewsPageContract.View view;
     private DataManager dataManager;
     private SQLiteManager sqLiteManager;
+    private Context context;
 
     public NewsPagePresenter(NewsPageContract.View view, Context context){
         this.view = view;
         view.setPresenter(this);
+        this.context = context;
         dataManager = DataManager.getInstance(context);
         sqLiteManager = SQLiteManager.getInstance(context);
     }
@@ -70,5 +73,15 @@ public class NewsPagePresenter implements NewsPageContract.Presenter {
 
             }
         }, dataBeans);
+    }
+
+    @Override
+    public void clearNewsCache() {
+        sqLiteManager.clearJuheNewsCache(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer count) throws Exception {
+                view.onCacheCleared(count);
+            }
+        });
     }
 }

@@ -24,8 +24,8 @@
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <WebView
-            android:id="@+id/news_detail_web_view"
+        <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </android.support.v4.widget.NestedScrollView>

@@ -34,11 +34,19 @@
     <string name="file_save_to">文件保存到：</string>
     <string name="share">分享</string>
     <string name="more">更多</string>
-    <string name="n">a966b86a6f4f92d450b36ace4ea1be04</string>
+    <string name="n">8e885c91834140ce05bd77250277fdcb</string>
     <string name="simple_news">极简新闻</string>
     <string name="bookmark">收藏</string>
     <string name="news_date_demo">2018-03-01 10:39</string>
-    <string name="news_author_demo">来源：看看新闻网</string>
+    <string name="news_author_demo">看看新闻网</string>
     <string name="news_update_count_part1">更新了</string>
     <string name="news_update_count_part2">篇新闻</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="remind">提示</string>
+    <string name="clear_news_cache_message">是否清除已缓存的新闻？</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="cache_clear_hint_part1">清除了</string>
+    <string name="cache_clear_hint_part2">条数据</string>
+    <string name="no_cache_to_clear">数据库很干净哟</string>
 </resources>

@@ -19,42 +19,8 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/simple_news"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/news_pic"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="2dp"
-            android:layout_weight="1"
-            fresco:placeholderImage="@drawable/place_holder" />
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/news_pic2"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_marginEnd="2dp"
-            android:layout_marginStart="2dp"
-            fresco:placeholderImage="@drawable/place_holder" />
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/news_pic3"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_marginStart="2dp"
-            fresco:placeholderImage="@drawable/place_holder" />
-    </LinearLayout>
+        android:textStyle="bold"
+        android:textSize="16sp"/>
 
     <LinearLayout
         android:paddingBottom="5dp"
@@ -67,14 +33,16 @@
             android:id="@+id/news_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/news_date_demo" />
+            android:text="@string/news_date_demo"
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/news_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="@string/news_author_demo" />
+            android:text="@string/news_author_demo"
+            android:textSize="12sp"/>
     </LinearLayout>
 
     <View

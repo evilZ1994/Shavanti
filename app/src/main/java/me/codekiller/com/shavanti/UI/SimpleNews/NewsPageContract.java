@@ -16,6 +16,8 @@ public interface NewsPageContract {
         void onLocalLoaded(List<JuheNews.ResultBean.DataBean> dataBeans);
 
         void onDataLoaded(List<JuheNews.ResultBean.DataBean> dataBeans);
+
+        void onCacheCleared(int count);
     }
 
     interface Presenter extends BasePresenter<View>{
@@ -24,5 +26,7 @@ public interface NewsPageContract {
         void loadData(String type);
 
         void saveNewData(List<JuheNews.ResultBean.DataBean> dataBeans);
+
+        void clearNewsCache();
     }
 }

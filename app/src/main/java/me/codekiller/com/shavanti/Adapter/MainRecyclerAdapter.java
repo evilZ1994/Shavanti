@@ -123,8 +123,17 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, JuheNewsDetailActivity.class);
-                    intent.putExtra("url", juheNews.getUrl());
+                    intent.putExtra("toolbar_title", context.getResources().getString(R.string.news_title));
+                    intent.putExtra("uniquekey", juheNews.getUniquekey());
                     intent.putExtra("title", juheNews.getTitle());
+                    intent.putExtra("date", juheNews.getDate());
+                    intent.putExtra("category", juheNews.getCategory());
+                    intent.putExtra("author_name", juheNews.getAuthor_name());
+                    intent.putExtra("url", juheNews.getUrl());
+                    intent.putExtra("thumbnail_pic_s", juheNews.getThumbnail_pic_s());
+                    intent.putExtra("thumbnail_pic_s02", juheNews.getThumbnail_pic_s02());
+                    intent.putExtra("thumbnail_pic_s03", juheNews.getThumbnail_pic_s03());
+
                     context.startActivity(intent);
                 }
             });

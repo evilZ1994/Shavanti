@@ -236,6 +236,21 @@ public class SQLiteManager {
     }
 
     /**
+     * 清除新闻缓存，返回删除的条数
+     */
+    public void clearJuheNewsCache(Consumer<Integer> consumer){
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                int count = database.delete("juhe_news_cache", null, null);
+                emitter.onNext(count);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
      * 保存收藏的新闻
      */
     public void addJuheNewsBookmark(Consumer<String> consumer, final JuheNews.ResultBean.DataBean news){
@@ -296,6 +311,50 @@ public class SQLiteManager {
 
                 emitter.onNext(dataBeans);
                 emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 查询单条收藏的新闻，通过url
+     */
+    public void selectJuheNewsBookmarkByUrl(Consumer<JuheNews.ResultBean.DataBean> consumer, final String url){
+        Observable.create(new ObservableOnSubscribe<JuheNews.ResultBean.DataBean>() {
+            @Override
+            public void subscribe(ObservableEmitter<JuheNews.ResultBean.DataBean> emitter) throws Exception {
+                Cursor cursor = database.query("juhe_news_bookmark", null, "url=?", new String[]{url}, null, null, null);
+                JuheNews.ResultBean.DataBean dataBean = new JuheNews.ResultBean.DataBean();
+                if (cursor.moveToFirst()){
+                    dataBean.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                    dataBean.setUniquekey(cursor.getString(cursor.getColumnIndex("uniquekey")));
+                    dataBean.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                    dataBean.setAuthor_name(cursor.getString(cursor.getColumnIndex("author_name")));
+                    dataBean.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+                    dataBean.setThumbnail_pic_s(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s")));
+                    dataBean.setThumbnail_pic_s02(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s02")));
+                    dataBean.setThumbnail_pic_s03(cursor.getString(cursor.getColumnIndex("thumbnail_pic_s03")));
+                    dataBean.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+                }
+                emitter.onNext(dataBean);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer);
+    }
+
+    /**
+     * 通过url删除指定新闻收藏
+     */
+    public void deleteJuheNewsBookmarkByUrl(Consumer<String> consumer, final String url){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                database.delete("juhe_news_bookmark", "url=?", new String[]{url});
+
+                emitter.onNext("done");
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

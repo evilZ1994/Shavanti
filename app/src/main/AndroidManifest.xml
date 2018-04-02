@@ -43,8 +43,10 @@
         <activity
             android:name=".UI.JuheNewsDetail.JuheNewsDetailActivity"
             android:theme="@style/JuheNewsTheme" />
-        <activity android:name=".UI.SimpleNews.NewsMainActivity"
-            android:theme="@style/JuheNewsTheme"/>
+        <activity
+            android:name=".UI.SimpleNews.NewsMainActivity"
+            android:theme="@style/JuheNewsTheme" />
+        <activity android:name=".UI.SimpleNews.Bookmarks.NewsBookmarksActivity"></activity>
     </application>
 
 </manifest>

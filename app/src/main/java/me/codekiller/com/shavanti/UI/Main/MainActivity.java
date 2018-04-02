@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity
 
         initViews();
 
+        writeDay();
+
         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (homeFragment == null) {
             homeFragment = HomeFragment.newInstance();
@@ -61,8 +63,6 @@ public class MainActivity extends AppCompatActivity
         presenter.checkHomePic();
         //修改背景图
         changeBackgroundPic();
-
-        writeDay();
     }
 
     /**
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity
     private void writeDay() {
         SharedPreferences preferences = getSharedPreferences("day", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("k", "54a9d4addb895fd4");
+        editor.putString("k", "94e39fb3429c5bf7");
         editor.apply();
     }
 }

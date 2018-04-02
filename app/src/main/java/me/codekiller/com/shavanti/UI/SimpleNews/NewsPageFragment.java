@@ -1,14 +1,19 @@
 package me.codekiller.com.shavanti.UI.SimpleNews;
 
 
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -26,6 +31,8 @@ import me.codekiller.com.shavanti.R;
 public class NewsPageFragment extends Fragment implements NewsPageContract.View{
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
+
+    private AlertDialog cacheClearDialog;
 
     private List<JuheNews.ResultBean.DataBean> dataBeans = new ArrayList<>();
     private NewsRecyclerAdapter adapter;
@@ -50,6 +57,8 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_page, container, false);
+
+        setHasOptionsMenu(true);
 
         type = getArguments().getString("type");
         typeCN = getArguments().getString("typeCN");
@@ -76,10 +85,30 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_simple_news, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_clear_news_cache){
+            if (cacheClearDialog != null){
+                cacheClearDialog.show();
+            }
+        } else if (item.getItemId() == R.id.menu_bookmarks){
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void initViews(View view) {
         refreshLayout = view.findViewById(R.id.news_page_swipe);
         recyclerView = view.findViewById(R.id.news_page_recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager );
         adapter = new NewsRecyclerAdapter(getContext(), dataBeans);
         recyclerView.setAdapter(adapter);
 
@@ -90,6 +119,18 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
             }
         });
         refreshLayout.setColorSchemeResources(R.color.toutiao_ico_blue);
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        dialogBuilder.setTitle(R.string.remind);
+        dialogBuilder.setMessage(R.string.clear_news_cache_message);
+        dialogBuilder.setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                presenter.clearNewsCache();
+            }
+        });
+        dialogBuilder.setNegativeButton(R.string.cancel, null);
+        cacheClearDialog = dialogBuilder.create();
     }
 
     @Override
@@ -134,14 +175,25 @@ public class NewsPageFragment extends Fragment implements NewsPageContract.View{
                 newData.add(dataBean);
             }
         }
-        adapter.notifyDataSetChanged();
         if (updateCount > 0){
+            adapter.notifyDataSetChanged();
+            recyclerView.scrollToPosition(this.dataBeans.size()-1);
             Resources resources = getContext().getResources();
             Toast.makeText(getContext(), resources.getString(R.string.news_update_count_part1)+updateCount+resources.getString(R.string.news_update_count_part2), Toast.LENGTH_SHORT).show();
         }
         //缓存新的数据
         if (!newData.isEmpty()){
             presenter.saveNewData(newData);
+        }
+    }
+
+    @Override
+    public void onCacheCleared(int count) {
+        if (count > 0){
+            Resources resources = getContext().getResources();
+            Toast.makeText(getContext(), resources.getString(R.string.cache_clear_hint_part1)+count+resources.getString(R.string.cache_clear_hint_part2), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), R.string.no_cache_to_clear, Toast.LENGTH_SHORT).show();
         }
     }
 
